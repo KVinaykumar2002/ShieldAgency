@@ -1,0 +1,5 @@
+[
+    { "id": "SA001", "name": "Michael Vance", "location": "Innovatech HQ", "shift": "Night", "contact": "555-0101", "status": "Active", "image": "https://picsum.photos/seed/guard1/100/100" },
+    { "id": "SA002", "name": "Alicia Keys", "location": "Global Events Corp.", "shift": "Day", "contact": "555-0102", "status": "Active", "image": "https://picsum.photos/seed/guard2/100/100" },
+    { "id": "SA003", "name": "Robert Downey", "location": "Pinnacle Properties", "shift": "Day", "contact": "555-0103", "status": "On Leave", "image": "https://picsum.photos/seed/guard3/100/100" }
+]

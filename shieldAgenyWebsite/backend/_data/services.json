@@ -1,0 +1,7 @@
+[
+    { "icon": "UserCheckIcon", "title": "Personal Security", "description": "Discreet and professional close protection for individuals, executives, and high-profile persons.", "category": "Security" },
+    { "icon": "HomeIcon", "title": "Residential Security", "description": "Comprehensive security solutions to protect your home and family, ensuring peace of mind.", "category": "Security" },
+    { "icon": "BuildingIcon", "title": "Commercial Security", "description": "Tailored security for offices, retail spaces, and corporate campuses to protect assets and personnel.", "category": "Security" },
+    { "icon": "SparklesIcon", "title": "One-time Cleaning", "description": "A thorough, single-session cleaning service perfect for special occasions or moving in/out.", "category": "Housekeeping" },
+    { "icon": "HandIcon", "title": "Manual Cleaning", "description": "Detailed and meticulous cleaning by our trained staff for areas requiring a personal touch.", "category": "Housekeeping" }
+]

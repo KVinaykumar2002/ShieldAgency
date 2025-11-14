@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Training Drill",
+    "imageUrl": "https://picsum.photos/seed/gallery1/600/400",
+    "category": "training",
+    "description": "Guards undergoing tactical training exercises."
+  },
+  {
+    "title": "Operations Briefing",
+    "imageUrl": "https://picsum.photos/seed/gallery2/600/400",
+    "category": "operations",
+    "description": "Daily security briefing before deployment."
+  },
+  {
+    "title": "Community Outreach",
+    "imageUrl": "https://picsum.photos/seed/gallery3/600/400",
+    "category": "events",
+    "description": "Shield Agency participating in a community safety event."
+  },
+  {
+    "title": "Command Center",
+    "imageUrl": "https://picsum.photos/seed/gallery4/600/400",
+    "category": "technology",
+    "description": "Monitoring security feeds in our central command hub."
+  }
+]
+

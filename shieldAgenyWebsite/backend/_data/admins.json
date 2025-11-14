@@ -1,0 +1,8 @@
+[
+  {
+    "name": "Admin",
+    "email": "admin@shield.com",
+    "password": "admin123",
+    "note": "This file is no longer used. Admin credentials are stored in the database via seeder.js"
+  }
+]

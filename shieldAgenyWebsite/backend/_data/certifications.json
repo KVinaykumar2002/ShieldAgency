@@ -1,0 +1,27 @@
+[
+  {
+    "title": "ISO 9001:2015",
+    "imageUrl": "https://picsum.photos/seed/iso9001/600/400",
+    "category": "operations",
+    "description": "Quality management systems certification demonstrating consistent service delivery."
+  },
+  {
+    "title": "ASIS International",
+    "imageUrl": "https://picsum.photos/seed/asis/600/400",
+    "category": "training",
+    "description": "Professional certification for security personnel and operations."
+  },
+  {
+    "title": "OSHA Compliant",
+    "imageUrl": "https://picsum.photos/seed/osha/600/400",
+    "category": "safety",
+    "description": "Occupational safety and health compliance certification."
+  },
+  {
+    "title": "C-TPAT Validated",
+    "imageUrl": "https://picsum.photos/seed/ctpat/600/400",
+    "category": "logistics",
+    "description": "Customs-Trade Partnership certification for secure supply chain operations."
+  }
+]
+
