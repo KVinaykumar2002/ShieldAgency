@@ -209,7 +209,7 @@ const JobApplications: React.FC = () => {
                                                 </p>
                                                 {app.resume && (
                                                     <a
-                                                        href={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001'}${app.resume.startsWith('/') ? app.resume : '/' + app.resume}`}
+                                                        href={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://shieldagency.onrender.com'}${app.resume.startsWith('/') ? app.resume : '/' + app.resume}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-sm text-highlight-blue hover:underline inline-flex items-center space-x-1"
