@@ -50,12 +50,15 @@ const App: React.FC = () => {
     }, []);
 
     const handleLoginSuccess = () => {
-        setIsAuthenticated(true);
         // Check role and redirect accordingly
         const role = roleStorage.getRole();
+        setIsAuthenticated(true);
         if (role === 'admin' || forceAdminLogin) {
             setForceAdminLogin(false);
-            handlePageChange('Admin');
+            // Directly set to Admin page after login if admin role
+            setCurrentPage('Admin');
+            setActiveSubPage(null);
+            setIsFading(false);
         } else {
             // Regular users go to Home page after login
             handlePageChange('Home');
@@ -161,31 +164,15 @@ const App: React.FC = () => {
     // Verify admin access when on Admin page
     useEffect(() => {
         if (currentPage === 'Admin') {
-            const verifyAdmin = async () => {
-                const role = roleStorage.getRole();
-                if (!isAuthenticated || role !== 'admin') {
-                    setForceAdminLogin(true);
-                    handlePageChange('Login');
-                    return;
-                }
-                
-                // Additional verification: Check with backend to prevent role tampering
-                try {
-                    const response = await authAPI.adminGetMe();
-                    if (!response.data || response.data.role !== 'admin') {
-                        handleLogout();
-                        handlePageChange('Home');
-                    }
-                } catch (error) {
-                    // Backend verification failed - user is not admin
-                    handleLogout();
-                    handlePageChange('Home');
-                }
-            };
-            
-            verifyAdmin();
+            const role = roleStorage.getRole();
+            // Check role from localStorage (JWT removed, so we rely on role storage)
+            if (!isAuthenticated || role !== 'admin') {
+                setForceAdminLogin(true);
+                handlePageChange('Login');
+                return;
+            }
         }
-    }, [currentPage, isAuthenticated, handlePageChange, handleLogout]);
+    }, [currentPage, isAuthenticated, handlePageChange]);
 
     if (currentPage === 'Admin') {
         // Double-check: Ensure only admins can access admin dashboard
