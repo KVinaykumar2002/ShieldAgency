@@ -124,7 +124,7 @@ export const authAPI = {
       success: boolean;
       token: string;
       data: { id: string; name: string; email: string; role: string };
-    }>('/users/register', {
+    }>('users/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password }),
     });
@@ -139,7 +139,7 @@ export const authAPI = {
       success: boolean;
       token: string;
       data: { id: string; name: string; email: string; role: string };
-    }>('/users/login', {
+    }>('users/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
