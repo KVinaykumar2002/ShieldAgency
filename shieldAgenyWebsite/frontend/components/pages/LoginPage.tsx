@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Page } from '../../types';
 import Button from '../ui/Button';
 import AnimatedSection from '../ui/AnimatedSection';
-import { authAPI, tokenStorage, roleStorage } from '../../utils/api';
+import { authAPI, roleStorage } from '../../utils/api';
 
 interface LoginPageProps {
     setPage: (page: Page) => void;
@@ -48,15 +48,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ setPage, onLoginSuccess, isAdmin 
                 ? await authAPI.adminLogin(email, password)
                 : await authAPI.userLogin(email, password);
             
-            // Store token and role
-            tokenStorage.setToken(response.token);
+            // Store role
             if (response.data?.role) {
                 // Ensure role is set correctly - never allow user to have admin role from user login
                 const role = response.data.role;
                 if (isAdmin && role !== 'admin') {
                     // Admin login but got user role - error
                     setError('Invalid credentials. Admin access required.');
-                    tokenStorage.removeToken();
                     roleStorage.removeRole();
                     setLoading(false);
                     return;
@@ -65,7 +63,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setPage, onLoginSuccess, isAdmin 
                     // User login but got admin role - this should never happen, but protect against it
                     console.error('Security: User login returned admin role - rejecting');
                     setError('Authentication error. Please try again.');
-                    tokenStorage.removeToken();
                     roleStorage.removeRole();
                     setLoading(false);
                     return;

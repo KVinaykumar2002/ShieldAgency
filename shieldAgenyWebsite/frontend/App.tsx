@@ -14,7 +14,7 @@ import AdminDashboard from './components/pages/AdminDashboard';
 import LoginPage from './components/pages/LoginPage';
 import SignUpPage from './components/pages/SignUpPage';
 import WhatsAppButton from './components/WhatsAppButton';
-import { authAPI, tokenStorage, roleStorage } from './utils/api';
+import { authAPI, roleStorage } from './utils/api';
 
 const App: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<Page>('Home');
@@ -27,8 +27,8 @@ const App: React.FC = () => {
     // Check authentication on mount
     useEffect(() => {
         const checkAuth = async () => {
-            const token = tokenStorage.getToken();
-            if (token) {
+            const role = roleStorage.getRole();
+            if (role) {
                 try {
                     const response = await authAPI.getMe();
                     setIsAuthenticated(true);
@@ -37,8 +37,7 @@ const App: React.FC = () => {
                         roleStorage.setRole(response.data.role);
                     }
                 } catch (error) {
-                    // Token is invalid, remove it
-                    tokenStorage.removeToken();
+                    // Auth check failed, clear role
                     roleStorage.removeRole();
                     setIsAuthenticated(false);
                 }

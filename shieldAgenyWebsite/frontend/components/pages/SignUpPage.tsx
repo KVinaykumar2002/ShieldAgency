@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Page } from '../../types';
 import Button from '../ui/Button';
 import AnimatedSection from '../ui/AnimatedSection';
-import { authAPI, tokenStorage, roleStorage } from '../../utils/api';
+import { authAPI, roleStorage } from '../../utils/api';
 
 interface SignUpPageProps {
     setPage: (page: Page) => void;
@@ -57,8 +57,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ setPage, onLoginSuccess }) => {
         try {
             const response = await authAPI.register(name, email, password);
             
-            // Store token and role
-            tokenStorage.setToken(response.token);
+            // Store role
             if (response.data?.role) {
                 roleStorage.setRole(response.data.role);
             }

@@ -1,15 +1,15 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://shieldagency.onrender.com/api/';
 
-// Token management
-export const tokenStorage = {
-  getToken: (): string | null => {
-    return localStorage.getItem('token');
+// User role storage
+export const roleStorage = {
+  getRole: (): string | null => {
+    return localStorage.getItem('role');
   },
-  setToken: (token: string): void => {
-    localStorage.setItem('token', token);
+  setRole: (role: string): void => {
+    localStorage.setItem('role', role);
   },
-  removeToken: (): void => {
-    localStorage.removeItem('token');
+  removeRole: (): void => {
+    localStorage.removeItem('role');
   }
 };
 
@@ -18,11 +18,8 @@ async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = tokenStorage.getToken();
-  
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
     ...options.headers,
   };
 
@@ -44,16 +41,13 @@ async function apiRequest<T>(
     if (!response.ok) {
       // Handle 403 Forbidden (admin access required)
       if (response.status === 403) {
-        // Clear invalid tokens and redirect
-        tokenStorage.removeToken();
         roleStorage.removeRole();
         throw new Error('Admin access required. You do not have permission to access this resource.');
       }
       // Handle 401 Unauthorized
       if (response.status === 401) {
-        tokenStorage.removeToken();
         roleStorage.removeRole();
-        throw new Error('Session expired. Please login again.');
+        throw new Error('Unauthorized access.');
       }
       throw new Error(data.message || data.error || 'An error occurred');
     }
@@ -67,24 +61,10 @@ async function apiRequest<T>(
   }
 }
 
-// User role storage
-export const roleStorage = {
-  getRole: (): string | null => {
-    return localStorage.getItem('role');
-  },
-  setRole: (role: string): void => {
-    localStorage.setItem('role', role);
-  },
-  removeRole: (): void => {
-    localStorage.removeItem('role');
-  }
-};
-
 // Auth API functions
 type ApiResponse<T> = {
   success: boolean;
   data: T;
-  token?: string;
   message?: string;
 };
 
@@ -122,7 +102,6 @@ export const authAPI = {
   register: async (name: string, email: string, password: string) => {
     const response = await apiRequest<{
       success: boolean;
-      token: string;
       data: { id: string; name: string; email: string; role: string };
     }>('users/register', {
       method: 'POST',
@@ -137,7 +116,6 @@ export const authAPI = {
   userLogin: async (email: string, password: string) => {
     const response = await apiRequest<{
       success: boolean;
-      token: string;
       data: { id: string; name: string; email: string; role: string };
     }>('users/login', {
       method: 'POST',
@@ -163,7 +141,6 @@ export const authAPI = {
   adminLogin: async (email: string, password: string) => {
     const response = await apiRequest<{
       success: boolean;
-      token: string;
       data: { id: string; name: string; email: string; role: string };
     }>('/auth/login', {
       method: 'POST',
@@ -196,7 +173,6 @@ export const authAPI = {
   },
 
   logout: () => {
-    tokenStorage.removeToken();
     roleStorage.removeRole();
   }
 };
