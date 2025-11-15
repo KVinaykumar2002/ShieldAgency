@@ -90,9 +90,14 @@ const Footer: React.FC<FooterProps> = ({ setPage }) => {
                     <div>
                         <h3 className="font-bold text-lg mb-4">Contact</h3>
                         <ul className="space-y-3 text-gray-300">
-                            <li><a href="tel:555-123-4567" className="hover:text-white transition-colors underline">+91-9886668368</a></li>
-                            <li><a href="mailto:contact@securityagency.com" className="hover:text-white transition-colors underline">shieldagency01@gmail.com</a></li>
-                            <li>Chennamma circle, Shop No 7 3rd Floor Tirumala Trade centre, <li> Neeligin Rd, Hubballi, </li>Karnataka 580029<br />Metro City</li>
+                            <li><a href="tel:+91-9886668368" className="hover:text-white transition-colors underline">+91-9886668368</a></li>
+                            <li><a href="mailto:shieldagency01@gmail.com" className="hover:text-white transition-colors underline">shieldagency01@gmail.com</a></li>
+                            <li className="leading-relaxed">
+                                Shop No. T2A, D Block, 3rd Floor,<br />
+                                Revankar Complex,<br />
+                                Court Circle, Hubballi - 580 029,<br />
+                                Karnataka
+                            </li>
                         </ul>
                         <div className="flex space-x-4 mt-6">
                            <a href="#" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors"><FacebookIcon /></a>
