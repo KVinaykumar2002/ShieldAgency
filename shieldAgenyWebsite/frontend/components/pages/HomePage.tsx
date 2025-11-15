@@ -4,6 +4,7 @@ import { ShieldCheckIcon, UserCheckIcon, LockIcon, TESTIMONIALS, SERVICES_DATA }
 import Button from '../ui/Button';
 import AnimatedSection from '../ui/AnimatedSection';
 import HeroCarousel from '../HeroCarousel';
+import GalleryCarousel from '../GalleryCarousel';
 import TestimonialScroller from '../ui/TestimonialScroller';
 import { contactAPI } from '../../utils/api';
 
@@ -46,7 +47,7 @@ const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
             <section className="py-20">
                  <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
                     <AnimatedSection>
-                        <img src="https://aissecure.in/wp-content/uploads/2025/04/best-security-guards-in-india.jpg" alt="Security Team" className="rounded-lg shadow-2xl"/>
+                        <GalleryCarousel />
                     </AnimatedSection>
                     <AnimatedSection delay="delay-300">
                         <h2 className="text-4xl font-bold mb-4">Unmatched <span className="text-highlight-blue">Expertise & Reliability</span></h2>
