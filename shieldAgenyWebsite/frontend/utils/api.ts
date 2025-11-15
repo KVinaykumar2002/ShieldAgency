@@ -179,7 +179,7 @@ export const authAPI = {
 
 export const certificationAPI = {
   getAll: async () =>
-    apiRequest<ApiResponse<Certification[]>>('/certifications', {
+    apiRequest<ApiResponse<Certification[]>>('certifications', {
       method: 'GET',
     }),
   create: async (payload: {
@@ -188,12 +188,12 @@ export const certificationAPI = {
     category?: string;
     description?: string;
   }) =>
-    apiRequest<ApiResponse<Certification>>('/admin/certifications', {
+    apiRequest<ApiResponse<Certification>>('admin/certifications', {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
   remove: async (id: string) =>
-    apiRequest<ApiResponse<{}>>(`/admin/certifications/${id}`, {
+    apiRequest<ApiResponse<{}>>(`admin/certifications/${id}`, {
       method: 'DELETE',
     }),
   update: async (
@@ -205,7 +205,7 @@ export const certificationAPI = {
       description?: string;
     }
   ) =>
-    apiRequest<ApiResponse<Certification>>(`/admin/certifications/${id}`, {
+    apiRequest<ApiResponse<Certification>>(`admin/certifications/${id}`, {
       method: 'PUT',
       body: JSON.stringify(payload),
     }),
@@ -213,7 +213,7 @@ export const certificationAPI = {
 
 export const galleryAPI = {
   getAll: async () =>
-    apiRequest<ApiResponse<GalleryItem[]>>('/gallery', {
+    apiRequest<ApiResponse<GalleryItem[]>>('gallery', {
       method: 'GET',
     }),
   create: async (payload: {
@@ -222,12 +222,12 @@ export const galleryAPI = {
     category?: string;
     description?: string;
   }) =>
-    apiRequest<ApiResponse<GalleryItem>>('/admin/gallery', {
+    apiRequest<ApiResponse<GalleryItem>>('admin/gallery', {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
   remove: async (id: string) =>
-    apiRequest<ApiResponse<{}>>(`/admin/gallery/${id}`, {
+    apiRequest<ApiResponse<{}>>(`admin/gallery/${id}`, {
       method: 'DELETE',
     }),
   update: async (
@@ -239,7 +239,7 @@ export const galleryAPI = {
       description?: string;
     }
   ) =>
-    apiRequest<ApiResponse<GalleryItem>>(`/admin/gallery/${id}`, {
+    apiRequest<ApiResponse<GalleryItem>>(`admin/gallery/${id}`, {
       method: 'PUT',
       body: JSON.stringify(payload),
     }),
@@ -247,21 +247,21 @@ export const galleryAPI = {
 
 export const guardAPI = {
   getAll: async () =>
-    apiRequest<ApiResponse<Guard[]>>('/admin/guards', {
+    apiRequest<ApiResponse<Guard[]>>('admin/guards', {
       method: 'GET',
     }),
   create: async (payload: Omit<Guard, '_id'>) =>
-    apiRequest<ApiResponse<Guard>>('/admin/guards', {
+    apiRequest<ApiResponse<Guard>>('admin/guards', {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
   update: async (id: string, payload: Partial<Omit<Guard, '_id'>>) =>
-    apiRequest<ApiResponse<Guard>>(`/admin/guards/${id}`, {
+    apiRequest<ApiResponse<Guard>>(`admin/guards/${id}`, {
       method: 'PUT',
       body: JSON.stringify(payload),
     }),
   remove: async (id: string) =>
-    apiRequest<ApiResponse<{}>>(`/admin/guards/${id}`, {
+    apiRequest<ApiResponse<{}>>(`admin/guards/${id}`, {
       method: 'DELETE',
     }),
 };
