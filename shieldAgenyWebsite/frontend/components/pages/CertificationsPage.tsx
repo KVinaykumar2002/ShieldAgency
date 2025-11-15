@@ -10,6 +10,7 @@ const CertificationsPage: React.FC = () => {
     const [lightboxImage, setLightboxImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
         const fetchCertifications = async () => {
@@ -66,6 +67,26 @@ const CertificationsPage: React.FC = () => {
                   .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
                   .join(' ');
 
+    // Auto carousel effect with pause on hover
+    const [isPaused, setIsPaused] = useState(false);
+    
+    useEffect(() => {
+        if (filteredGallery.length === 0 || isPaused) return;
+        
+        const interval = setInterval(() => {
+            setCurrentIndex((prevIndex) => 
+                (prevIndex + 1) % filteredGallery.length
+            );
+        }, 4000); // Change image every 4 seconds
+
+        return () => clearInterval(interval);
+    }, [filteredGallery.length, isPaused]);
+
+    // Reset index when filter changes
+    useEffect(() => {
+        setCurrentIndex(0);
+    }, [filter]);
+
     return (
         <div className="pt-24 pb-12">
             <header className="text-center mb-16 px-4">
@@ -118,33 +139,65 @@ const CertificationsPage: React.FC = () => {
                 ) : filteredGallery.length === 0 ? (
                     <p className="text-center text-gray-300">No items found for this category.</p>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-0 rounded-xl overflow-hidden">
-                        {filteredGallery.map((item) => (
-                            <AnimatedSection key={item._id} delay="delay-100">
+                    <div 
+                        className="relative w-full max-w-6xl mx-auto"
+                        onMouseEnter={() => setIsPaused(true)}
+                        onMouseLeave={() => setIsPaused(false)}
+                    >
+                        <div className="relative w-full min-h-[500px] md:min-h-[600px] rounded-xl overflow-hidden bg-black/20 flex items-center justify-center">
+                            {filteredGallery.map((item, index) => (
                                 <div
-                                    className="relative cursor-pointer group"
-                                    onClick={() => setLightboxImage(item.imageUrl)}
+                                    key={item._id}
+                                    className={`absolute inset-0 transition-opacity duration-700 ease-in-out flex items-center justify-center ${
+                                        index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                                    }`}
                                 >
-                                    <div className="aspect-[4/5] w-full overflow-hidden">
-                                        <img
-                                            src={item.imageUrl}
-                                            alt={item.title}
-                                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                        />
-                                    </div>
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-center px-4">
-                                        <div className="text-white space-y-1">
-                                            <p className="font-semibold text-sm md:text-base">{item.title}</p>
-                                            {item.category && (
-                                                <span className="text-xs uppercase tracking-wide block">
-                                                    {formatCategoryLabel(item.category)}
-                                                </span>
-                                            )}
+                                    <div
+                                        className="relative w-full h-full cursor-pointer group flex items-center justify-center"
+                                        onClick={() => setLightboxImage(item.imageUrl)}
+                                    >
+                                        <div className="relative max-w-full max-h-[80vh] w-full h-full flex items-center justify-center p-4">
+                                            <img
+                                                src={item.imageUrl}
+                                                alt={item.title}
+                                                className="max-w-full max-h-full w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-105 rounded-lg shadow-2xl"
+                                                loading="lazy"
+                                                onError={(e) => {
+                                                    const target = e.target as HTMLImageElement;
+                                                    target.style.display = 'none';
+                                                }}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8 px-4 pointer-events-none">
+                                                <div className="text-white text-center space-y-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                                    <p className="font-bold text-2xl md:text-3xl drop-shadow-lg">{item.title}</p>
+                                                    {item.category && (
+                                                        <span className="inline-block px-4 py-1 bg-highlight-blue/80 backdrop-blur-sm rounded-full text-sm uppercase tracking-wide font-semibold drop-shadow-lg">
+                                                            {formatCategoryLabel(item.category)}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </AnimatedSection>
-                        ))}
+                            ))}
+                        </div>
+                        
+                        {/* Carousel Indicators */}
+                        <div className="flex justify-center gap-2 mt-6">
+                            {filteredGallery.map((_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setCurrentIndex(index)}
+                                    className={`h-2 rounded-full transition-all duration-300 ${
+                                        index === currentIndex
+                                            ? 'w-8 bg-highlight-blue'
+                                            : 'w-2 bg-gray-500 hover:bg-gray-400'
+                                    }`}
+                                    aria-label={`Go to slide ${index + 1}`}
+                                />
+                            ))}
+                        </div>
                     </div>
                 )}
             </section>
