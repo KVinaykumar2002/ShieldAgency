@@ -320,70 +320,70 @@ export const adminAPI = {
     currentPassword: string;
     newPassword: string;
   }) =>
-    apiRequest<ApiResponse<{}>>('/auth/change-password', {
+    apiRequest<ApiResponse<{}>>('auth/change-password', {
       method: 'PUT',
       body: JSON.stringify(payload),
     }),
   getDashboardStats: async () =>
-    apiRequest<ApiResponse<DashboardStats>>('/admin/dashboard/stats', {
+    apiRequest<ApiResponse<DashboardStats>>('admin/dashboard/stats', {
       method: 'GET',
     }),
 };
 
 export const applicationAPI = {
   getAll: async () =>
-    apiRequest<ApiResponse<Application[]>>('/admin/applications', {
+    apiRequest<ApiResponse<Application[]>>('admin/applications', {
       method: 'GET',
     }),
   update: async (id: string, payload: { status?: string; notes?: string }) =>
-    apiRequest<ApiResponse<Application>>(`/admin/applications/${id}`, {
+    apiRequest<ApiResponse<Application>>(`admin/applications/${id}`, {
       method: 'PUT',
       body: JSON.stringify(payload),
     }),
   remove: async (id: string) =>
-    apiRequest<ApiResponse<{}>>(`/admin/applications/${id}`, {
+    apiRequest<ApiResponse<{}>>(`admin/applications/${id}`, {
       method: 'DELETE',
     }),
 };
 
 export const trainingAPI = {
   getAll: async () =>
-    apiRequest<ApiResponse<Training[]>>('/admin/trainings', {
+    apiRequest<ApiResponse<Training[]>>('admin/trainings', {
       method: 'GET',
     }),
   create: async (payload: Omit<Training, '_id' | 'createdAt'>) =>
-    apiRequest<ApiResponse<Training>>('/admin/trainings', {
+    apiRequest<ApiResponse<Training>>('admin/trainings', {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
   update: async (id: string, payload: Partial<Omit<Training, '_id' | 'createdAt'>>) =>
-    apiRequest<ApiResponse<Training>>(`/admin/trainings/${id}`, {
+    apiRequest<ApiResponse<Training>>(`admin/trainings/${id}`, {
       method: 'PUT',
       body: JSON.stringify(payload),
     }),
   remove: async (id: string) =>
-    apiRequest<ApiResponse<{}>>(`/admin/trainings/${id}`, {
+    apiRequest<ApiResponse<{}>>(`admin/trainings/${id}`, {
       method: 'DELETE',
     }),
 };
 
 export const customerAPI = {
   getAll: async () =>
-    apiRequest<ApiResponse<Customer[]>>('/admin/customers', {
+    apiRequest<ApiResponse<Customer[]>>('admin/customers', {
       method: 'GET',
     }),
   create: async (payload: Omit<Customer, '_id' | 'createdAt'>) =>
-    apiRequest<ApiResponse<Customer>>('/admin/customers', {
+    apiRequest<ApiResponse<Customer>>('admin/customers', {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
   update: async (id: string, payload: Partial<Omit<Customer, '_id' | 'createdAt'>>) =>
-    apiRequest<ApiResponse<Customer>>(`/admin/customers/${id}`, {
+    apiRequest<ApiResponse<Customer>>(`admin/customers/${id}`, {
       method: 'PUT',
       body: JSON.stringify(payload),
     }),
   remove: async (id: string) =>
-    apiRequest<ApiResponse<{}>>(`/admin/customers/${id}`, {
+    apiRequest<ApiResponse<{}>>(`admin/customers/${id}`, {
       method: 'DELETE',
     }),
 };
@@ -400,11 +400,11 @@ export type Enquiry = {
 
 export const enquiryAPI = {
   getAll: async () =>
-    apiRequest<ApiResponse<Enquiry[]>>('/admin/enquiries', {
+    apiRequest<ApiResponse<Enquiry[]>>('admin/enquiries', {
       method: 'GET',
     }),
   remove: async (id: string) =>
-    apiRequest<ApiResponse<{}>>(`/admin/enquiries/${id}`, {
+    apiRequest<ApiResponse<{}>>(`admin/enquiries/${id}`, {
       method: 'DELETE',
     }),
 };
@@ -416,7 +416,7 @@ export const contactAPI = {
     subject: string;
     message: string;
   }) =>
-    apiRequest<ApiResponse<Enquiry>>('/contact', {
+    apiRequest<ApiResponse<Enquiry>>('contact', {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
