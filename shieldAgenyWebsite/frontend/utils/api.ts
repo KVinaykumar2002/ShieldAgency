@@ -156,7 +156,7 @@ export const authAPI = {
     const response = await apiRequest<{
       success: boolean;
       data: { id: string; name: string; email: string; role: string };
-    }>('/auth/me', {
+    }>('auth/me', {
       method: 'GET',
     });
     return response;
