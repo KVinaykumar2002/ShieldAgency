@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Page } from '../types';
 import { NAV_LINKS } from '../constants';
-import companyLogo from '../src/assets/Logo.png';
 import Button from './ui/Button';
 import { roleStorage } from '../utils/api';
 
@@ -12,9 +11,9 @@ const CompanyLogo: React.FC<{ onClick: () => void }> = ({ onClick }) => (
         aria-label="Shield Agency Home"
     >
         <img
-            src={companyLogo}
+            src="/LOGO-02.png"
             alt="Shield Agency Logo"
-            className="h-12 w-auto object-contain drop-shadow-lg"
+            className="h-8 sm:h-10 md:h-12 w-auto object-contain drop-shadow-lg"
         />
     </button>
 );
@@ -87,11 +86,21 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
                                 {item.label}
                                 <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-transform duration-300 ${openDropdown === item.label ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                             </button>
-                            <div className={`pl-4 overflow-hidden transition-all duration-300 ease-in-out ${openDropdown === item.label ? 'max-h-96' : 'max-h-0'}`}>
-                                <ul className="py-2 space-y-2">
-                                    {item.subItems.map((sub) => (
+                            <div className={`pl-4 overflow-hidden transition-all duration-300 ease-in-out ${openDropdown === item.label ? 'max-h-[600px]' : 'max-h-0'}`}>
+                                <ul className="py-2 space-y-1">
+                                    {item.subItems.map((sub, index) => (
                                         <li key={sub.label}>
-                                            <button onClick={() => handleLinkClick(sub.page, sub.subPageId)} className="w-full text-left text-gray-300 hover:text-accent-gold transition-colors duration-200">
+                                            {sub.isCategory && index > 0 && (
+                                                <div className="border-t border-zinc-600/50 my-2"></div>
+                                            )}
+                                            <button 
+                                                onClick={() => handleLinkClick(sub.page, sub.subPageId)} 
+                                                className={`w-full text-left transition-colors duration-200 ${
+                                                    sub.isCategory 
+                                                        ? 'text-accent-gold font-semibold hover:text-accent-gold py-2' 
+                                                        : 'text-gray-300 hover:text-accent-gold pl-4 py-1.5'
+                                                }`}
+                                            >
                                                 {sub.label}
                                             </button>
                                         </li>
@@ -110,8 +119,8 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
     );
 
     return (
-        <header className="fixed top-0 left-0 w-full z-50 p-4">
-            <nav className={`w-full max-w-7xl mx-auto flex items-center justify-between p-3 bg-white/5 backdrop-blur-md border border-white/20 transition-all duration-500 ease-in-out ${isScrolled ? 'rounded-[30px] shadow-2xl shadow-black/40' : 'rounded-xl'}`}>
+        <header className="fixed top-0 left-0 w-full z-50 p-2 sm:p-4">
+            <nav className={`w-full max-w-7xl mx-auto flex items-center justify-between p-2 sm:p-3 bg-zinc-900 border border-white/10 transition-all duration-500 ease-in-out ${isScrolled ? 'rounded-[20px] sm:rounded-[30px] shadow-2xl shadow-black/60' : 'rounded-lg sm:rounded-xl'}`}>
                 <CompanyLogo onClick={() => handleLinkClick('Home')} />
 
                 <div className="hidden lg:flex items-center space-x-2">
@@ -126,10 +135,20 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
                             </button>
                             {item.subItems && (
                                 <div className={`absolute top-full left-1/2 -translate-x-1/2 pt-4 transition-all duration-300 ${openDropdown === item.label ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
-                                    <ul className="bg-zinc-800/80 backdrop-blur-lg border border-zinc-700 rounded-xl shadow-2xl p-2 min-w-[200px]">
-                                        {item.subItems.map((sub) => (
+                                    <ul className="bg-zinc-800/80 backdrop-blur-lg border border-zinc-700 rounded-xl shadow-2xl p-2 min-w-[220px] max-h-[80vh] overflow-y-auto">
+                                        {item.subItems.map((sub, index) => (
                                             <li key={sub.label}>
-                                                <button onClick={() => handleLinkClick(sub.page, sub.subPageId)} className="w-full text-left px-4 py-2 text-gray-200 rounded-md hover:bg-highlight-blue/50 hover:text-white transition-colors duration-200 text-sm">
+                                                {sub.isCategory && index > 0 && (
+                                                    <div className="border-t border-zinc-600/50 my-1"></div>
+                                                )}
+                                                <button 
+                                                    onClick={() => handleLinkClick(sub.page, sub.subPageId)} 
+                                                    className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-200 text-sm ${
+                                                        sub.isCategory 
+                                                            ? 'text-accent-gold font-semibold hover:bg-accent-gold/20 hover:text-accent-gold' 
+                                                            : 'text-gray-200 hover:bg-highlight-blue/50 hover:text-white pl-8'
+                                                    }`}
+                                                >
                                                     {sub.label}
                                                 </button>
                                             </li>
@@ -213,8 +232,8 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
                 </div>
             </nav>
 
-            <div className={`lg:hidden absolute top-[calc(100%+0.5rem)] left-0 w-full px-4 transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'}`}>
-                 <div className="p-4 bg-zinc-900/80 backdrop-blur-xl border border-zinc-700 rounded-2xl shadow-2xl shadow-black/30">
+            <div className={`lg:hidden absolute top-[calc(100%+0.5rem)] left-0 w-full px-2 sm:px-4 transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'}`}>
+                 <div className="p-3 sm:p-4 bg-zinc-900/80 backdrop-blur-xl border border-zinc-700 rounded-xl sm:rounded-2xl shadow-2xl shadow-black/30 max-h-[calc(100vh-120px)] overflow-y-auto">
                     <MobileNavLinks />
                  </div>
             </div>

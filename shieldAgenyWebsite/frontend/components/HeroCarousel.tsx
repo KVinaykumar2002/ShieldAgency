@@ -67,22 +67,22 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ setPage }) => {
             ))}
 
             {/* Content Overlay */}
-            <div className="relative z-20 h-full flex items-start md:items-center justify-start md:justify-center text-white px-6 sm:px-8 md:px-12 pt-24 sm:pt-28 md:pt-0 pb-16">
+            <div className="relative z-20 h-full flex items-start md:items-center justify-start md:justify-center text-white px-4 sm:px-6 md:px-8 lg:px-12 pt-20 sm:pt-24 md:pt-0 pb-12 sm:pb-16">
                  <div 
                     key={currentIndex} // Re-trigger animation on slide change
-                    className="relative max-w-2xl md:max-w-3xl w-full animate-slide-up-fade-in text-left md:text-center space-y-5"
+                    className="relative max-w-2xl md:max-w-3xl w-full animate-slide-up-fade-in text-left md:text-center space-y-4 sm:space-y-5"
                  >
-                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                    <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold leading-tight px-2 sm:px-0" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                        {CAROUSEL_SLIDES[currentIndex].title}
                     </h1>
-                    <p className="text-sm sm:text-base md:text-lg md:max-w-2xl md:mx-auto text-gray-200" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg md:max-w-2xl md:mx-auto text-gray-200 px-2 sm:px-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
                         {CAROUSEL_SLIDES[currentIndex].description}
                     </p>
-                    <div className="flex md:justify-center">
+                    <div className="flex md:justify-center px-2 sm:px-0">
                         <Button 
                             onClick={() => setPage(CAROUSEL_SLIDES[currentIndex].ctaPage, CAROUSEL_SLIDES[currentIndex].ctaSubPageId)} 
                             variant="secondary"
-                            className="min-w-[10rem] py-3 text-sm sm:text-base"
+                            className="min-w-[8rem] sm:min-w-[10rem] py-2.5 sm:py-3 text-xs sm:text-sm md:text-base"
                         >
                             {CAROUSEL_SLIDES[currentIndex].ctaText}
                         </Button>
@@ -107,12 +107,12 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ setPage }) => {
             </button>
 
             {/* Pagination Dots */}
-            <div className="absolute z-30 bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex space-x-2 sm:space-x-3">
+            <div className="absolute z-30 bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex space-x-2 sm:space-x-3">
                 {CAROUSEL_SLIDES.map((_, index) => (
                     <button 
                         key={index}
                         onClick={() => goToSlide(index)}
-                        className={`w-3 h-3 rounded-full transition-all duration-300 ${currentIndex === index ? 'bg-accent-gold scale-125 shadow-lg shadow-accent-gold/50' : 'bg-white/40 hover:bg-white/70'}`}
+                        className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${currentIndex === index ? 'bg-accent-gold scale-125 shadow-lg shadow-accent-gold/50' : 'bg-white/40 hover:bg-white/70'}`}
                         aria-label={`Go to slide ${index + 1}`}
                     />
                 ))}

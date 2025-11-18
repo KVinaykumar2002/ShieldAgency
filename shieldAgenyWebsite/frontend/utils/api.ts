@@ -1,3 +1,5 @@
+import type { GoogleReview as GoogleReviewType } from '../types';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://shieldagency.onrender.com/api/';
 
 // User role storage
@@ -282,6 +284,7 @@ export type Application = {
   phone: string;
   message?: string;
   resume: string;
+  jobTitle?: string;
   status?: 'Pending' | 'Reviewed' | 'Interviewed' | 'Selected' | 'Rejected';
   notes?: string;
   submittedAt: string;
@@ -331,6 +334,20 @@ export const adminAPI = {
 };
 
 export const applicationAPI = {
+  create: async (formData: FormData) => {
+    const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://shieldagency.onrender.com/api/';
+    const response = await fetch(`${API_BASE_URL}apply`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Failed to submit application' }));
+      throw new Error(error.error || error.message || 'Failed to submit application');
+    }
+
+    return response.json() as Promise<ApiResponse<Application>>;
+  },
   getAll: async () =>
     apiRequest<ApiResponse<Application[]>>('admin/applications', {
       method: 'GET',
@@ -419,6 +436,47 @@ export const contactAPI = {
     apiRequest<ApiResponse<Enquiry>>('contact', {
       method: 'POST',
       body: JSON.stringify(payload),
+    }),
+};
+
+export type GoogleReview = GoogleReviewType;
+
+export const googleReviewsAPI = {
+  getPublic: async () =>
+    apiRequest<ApiResponse<GoogleReview[]>>('google-reviews', {
+      method: 'GET',
+    }),
+  getAll: async () =>
+    apiRequest<ApiResponse<GoogleReview[]>>('admin/google-reviews', {
+      method: 'GET',
+    }),
+  create: async (payload: {
+    reviewerName: string;
+    rating: number;
+    reviewText: string;
+    reviewUrl?: string;
+    profileImage?: string;
+    publishedAt?: string;
+  }) =>
+    apiRequest<ApiResponse<GoogleReview>>('admin/google-reviews', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+  update: async (id: string, payload: Partial<{
+    reviewerName: string;
+    rating: number;
+    reviewText: string;
+    reviewUrl?: string;
+    profileImage?: string;
+    publishedAt?: string;
+  }>) =>
+    apiRequest<ApiResponse<GoogleReview>>(`admin/google-reviews/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    }),
+  remove: async (id: string) =>
+    apiRequest<ApiResponse<{}>>(`admin/google-reviews/${id}`, {
+      method: 'DELETE',
     }),
 };
 

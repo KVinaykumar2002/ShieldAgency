@@ -14,6 +14,7 @@ import AdminDashboard from './components/pages/AdminDashboard';
 import LoginPage from './components/pages/LoginPage';
 import SignUpPage from './components/pages/SignUpPage';
 import WhatsAppButton from './components/WhatsAppButton';
+import MailButton from './components/MailButton';
 import { authAPI, roleStorage } from './utils/api';
 
 const App: React.FC = () => {
@@ -214,8 +215,11 @@ const App: React.FC = () => {
                     {renderPublicPage()}
                 </main>
                 <Footer setPage={handlePageChange} />
-                {/* WhatsApp Button - Shows on all public user pages */}
-                <WhatsAppButton />
+                {/* Contact Buttons - Shows on all public user pages */}
+                <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end">
+                    <WhatsAppButton />
+                    <MailButton />
+                </div>
             </div>
         </div>
     );

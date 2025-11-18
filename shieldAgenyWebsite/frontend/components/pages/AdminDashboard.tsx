@@ -15,6 +15,7 @@ import GalleryManagement from '../admin/GalleryManagement';
 import JobApplications from '../admin/JobApplications';
 import WebsiteEnquiries from '../admin/WebsiteEnquiries';
 import Settings from '../admin/Settings';
+import GoogleReviewsManagement from '../admin/GoogleReviewsManagement';
 
 interface AdminDashboardProps {
     setPage: (page: Page) => void;
@@ -58,6 +59,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ setPage, onLogout }) =>
             case 'Certifications': return <CertificationsManagement />;
             case 'Gallery': return <GalleryManagement />;
             case 'Applications': return <JobApplications />;
+            case 'Google Reviews': return <GoogleReviewsManagement />;
             case 'Enquiries': return <WebsiteEnquiries />;
             case 'Settings': return <Settings />;
             default: return <DashboardOverview />;

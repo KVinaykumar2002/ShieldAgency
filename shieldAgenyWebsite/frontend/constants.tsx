@@ -105,7 +105,25 @@ export const NAV_LINKS: NavItem[] = [
     ],
   },
   {
-    label: 'Services', page: 'Services',
+    label: 'Services',
+    page: 'Services',
+    subItems: [
+      { label: 'Security Services', page: 'Services', subPageId: 'security-services', isCategory: true },
+      { label: 'Personal Security', page: 'Services', subPageId: 'security-services' },
+      { label: 'Residential Security', page: 'Services', subPageId: 'security-services' },
+      { label: 'Commercial Security', page: 'Services', subPageId: 'security-services' },
+      { label: 'Industrial Security', page: 'Services', subPageId: 'security-services' },
+      { label: 'Hospital Security', page: 'Services', subPageId: 'security-services' },
+      { label: 'Warehouse Security', page: 'Services', subPageId: 'security-services' },
+      { label: 'Event Management Security', page: 'Services', subPageId: 'security-services' },
+      { label: 'Parking Security', page: 'Services', subPageId: 'security-services' },
+      { label: 'Bouncer Services', page: 'Services', subPageId: 'security-services' },
+      { label: 'Housekeeping Services', page: 'Services', subPageId: 'housekeeping-services', isCategory: true },
+      { label: 'One-time Cleaning', page: 'Services', subPageId: 'housekeeping-services' },
+      { label: 'Manual Cleaning', page: 'Services', subPageId: 'housekeeping-services' },
+      { label: 'Mechanized Cleaning', page: 'Services', subPageId: 'housekeeping-services' },
+      { label: 'Deep Cleaning', page: 'Services', subPageId: 'housekeeping-services' },
+    ],
   },
   { label: 'Training', page: 'Training' },
   { label: 'Gallery', page: 'Gallery' },
@@ -129,7 +147,7 @@ export const CAROUSEL_SLIDES: CarouselSlide[] = [
     ctaPage: 'Contact',
   },
   {
-    image: 'https://content.jdmagicbox.com/comp/guntur/l7/9999px863.x863.220810192646.h8l7/catalogue/sri-sai-krishna-security-services-pvt-ltd-kothapet-guntur-security-services-n6gciuv1nm.jpg',
+    image: 'https://www.promansecuritech.com/wp-content/uploads/2019/05/promansecuritech-security-guard-agency-banner.jpg',
     title: <>Close Protection <span className="text-accent-gold">Redefined</span></>,
     description: 'Discreet, professional, and highly trained bodyguards for executives, dignitaries, and high-profile individuals.',
     ctaText: 'Contact Us',
@@ -421,6 +439,7 @@ export const ADMIN_SIDEBAR_LINKS: { label: AdminSection; icon: React.ElementType
     { label: 'Certifications', icon: AwardIcon },
     { label: 'Gallery', icon: ImageIcon },
     { label: 'Applications', icon: FileTextIcon },
+    { label: 'Google Reviews', icon: StarIcon },
     { label: 'Enquiries', icon: MailIcon },
 ];
 

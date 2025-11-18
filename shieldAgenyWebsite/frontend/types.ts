@@ -24,6 +24,7 @@ export interface NavSubItem {
     label:string;
     page: Page;
     subPageId: string;
+    isCategory?: boolean;
 }
 
 export interface Service {
@@ -56,6 +57,17 @@ export interface JobOpening {
     description: string[];
 }
 
+export interface GoogleReview {
+    _id: string;
+    reviewerName: string;
+    rating: number;
+    reviewText: string;
+    reviewUrl?: string;
+    profileImage?: string;
+    publishedAt?: string;
+    createdAt: string;
+}
+
 export interface CarouselSlide {
   image: string;
   title: ReactNode;
@@ -74,6 +86,7 @@ export type AdminSection =
   | 'Certifications'
   | 'Gallery'
   | 'Applications'
+  | 'Google Reviews'
   | 'Enquiries'
   | 'Settings';
 

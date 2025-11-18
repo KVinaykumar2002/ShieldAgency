@@ -10,13 +10,13 @@ interface RecruitmentProcedureProps {
 
 const RecruitmentProcedure: React.FC<RecruitmentProcedureProps> = ({ setPage }) => {
     return (
-        <section id="recruitment-procedure" className="py-20">
+        <section id="recruitment-procedure" className="py-12 sm:py-16 md:py-20">
             <AnimatedSection>
-                <h2 className="text-4xl font-bold text-center mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 px-4">
                     Our <span className="text-highlight-blue">Recruitment Procedure</span>
                 </h2>
             </AnimatedSection>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-6xl mx-auto px-4">
                 {RECRUITMENT_STEPS.map((step, index) => (
                     <AnimatedSection key={index} delay={`delay-${(index * 100)}`}>
                         <div className="bg-glass-bg border border-white/10 rounded-xl p-6 h-full group transition-all duration-500 ease-in-out hover:border-accent-gold/50 hover:scale-[1.03] hover:shadow-2xl hover:shadow-accent-gold/10">
@@ -48,9 +48,9 @@ const RecruitmentProcedure: React.FC<RecruitmentProcedureProps> = ({ setPage }) 
                 ))}
             </div>
             <AnimatedSection>
-                <div className="text-center mt-16">
-                     <h3 className="text-2xl font-bold mb-4 text-white">Join Our Ranks</h3>
-                    <p className="max-w-xl mx-auto text-gray-300 mb-8">
+                <div className="text-center mt-12 sm:mt-16 px-4">
+                     <h3 className="text-xl sm:text-2xl font-bold mb-4 text-white">Join Our Ranks</h3>
+                    <p className="max-w-xl mx-auto text-gray-300 mb-6 sm:mb-8 text-sm sm:text-base">
                         If you meet these standards and are ready for a challenging and rewarding career, we invite you to apply.
                     </p>
                     <Button onClick={() => setPage('Careers', 'apply')} variant="secondary">

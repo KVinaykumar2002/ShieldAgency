@@ -88,18 +88,18 @@ const CertificationsPage: React.FC = () => {
     }, [filter]);
 
     return (
-        <div className="pt-24 pb-12">
-            <header className="text-center mb-16 px-4">
+        <div className="pt-20 sm:pt-24 pb-8 sm:pb-12">
+            <header className="text-center mb-12 sm:mb-16 px-4">
                 <AnimatedSection>
-                    <h1 className="text-5xl font-bold">Credentials & <span className="text-accent-gold">Gallery</span></h1>
-                    <p className="text-lg text-gray-300 mt-2">Our commitment to excellence, certified and captured.</p>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">Credentials & <span className="text-accent-gold">Gallery</span></h1>
+                    <p className="text-base sm:text-lg text-gray-300 mt-2">Our commitment to excellence, certified and captured.</p>
                 </AnimatedSection>
             </header>
 
             {/* Certifications Section */}
             <section className="py-12 container mx-auto px-4">
                  <AnimatedSection>
-                    <h2 className="text-4xl font-bold text-center mb-12"><span className="text-highlight-blue">Our</span> Certifications</h2>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12"><span className="text-highlight-blue">Our</span> Certifications</h2>
                     {loading ? (
                         <p className="text-center text-gray-300">Loading certifications...</p>
                     ) : error ? (
@@ -123,8 +123,8 @@ const CertificationsPage: React.FC = () => {
             {/* Gallery Section */}
             <section className="py-12 container mx-auto px-4">
                  <AnimatedSection>
-                    <h2 className="text-4xl font-bold text-center mb-8"><span className="text-highlight-blue">In The</span> Field</h2>
-                    <div className="flex justify-center space-x-2 md:space-x-4 mb-8">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 sm:mb-8"><span className="text-highlight-blue">In The</span> Field</h2>
+                    <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-6 sm:mb-8">
                         {filters.map(f => (
                             <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-md transition-colors font-semibold ${filter === f ? 'bg-highlight-blue text-white' : 'bg-glass-bg hover:bg-white/20 text-gray-200'}`}>
                                 {formatCategoryLabel(f)}
@@ -144,7 +144,7 @@ const CertificationsPage: React.FC = () => {
                         onMouseEnter={() => setIsPaused(true)}
                         onMouseLeave={() => setIsPaused(false)}
                     >
-                        <div className="relative w-full min-h-[500px] md:min-h-[600px] rounded-xl overflow-hidden bg-black/20 flex items-center justify-center">
+                        <div className="relative w-full min-h-[300px] sm:min-h-[400px] md:min-h-[500px] lg:min-h-[600px] rounded-xl overflow-hidden bg-black/20 flex items-center justify-center">
                             {filteredGallery.map((item, index) => (
                                 <div
                                     key={item._id}
@@ -169,7 +169,7 @@ const CertificationsPage: React.FC = () => {
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8 px-4 pointer-events-none">
                                                 <div className="text-white text-center space-y-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                                    <p className="font-bold text-2xl md:text-3xl drop-shadow-lg">{item.title}</p>
+                                                    <p className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl drop-shadow-lg">{item.title}</p>
                                                     {item.category && (
                                                         <span className="inline-block px-4 py-1 bg-highlight-blue/80 backdrop-blur-sm rounded-full text-sm uppercase tracking-wide font-semibold drop-shadow-lg">
                                                             {formatCategoryLabel(item.category)}

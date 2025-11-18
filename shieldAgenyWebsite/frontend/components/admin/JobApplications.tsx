@@ -108,7 +108,8 @@ const JobApplications: React.FC = () => {
                     app.name.toLowerCase().includes(term) ||
                     app.email.toLowerCase().includes(term) ||
                     app.phone.toLowerCase().includes(term) ||
-                    (app.message && app.message.toLowerCase().includes(term))
+                    (app.message && app.message.toLowerCase().includes(term)) ||
+                    (app.jobTitle && app.jobTitle.toLowerCase().includes(term))
             );
         }
         
@@ -162,7 +163,7 @@ const JobApplications: React.FC = () => {
                             </svg>
                             <input
                                 type="text"
-                                placeholder="Search by name, email, or phone..."
+                                placeholder="Search by name, email, phone, or job title..."
                                 className="bg-transparent w-full placeholder-gray-500 focus:outline-none text-sm"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -192,11 +193,18 @@ const JobApplications: React.FC = () => {
                                 <li key={app._id} className="p-6 hover:bg-white/5 transition-colors">
                                     <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                                         <div className="space-y-2 flex-1">
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-3 flex-wrap">
                                                 <h2 className="text-xl font-semibold text-white">{app.name}</h2>
                                                 <span className="text-sm text-gray-400">{app.email}</span>
                                                 <span className="text-sm text-gray-400">{app.phone}</span>
                                             </div>
+                                            {app.jobTitle && (
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs font-semibold text-accent-gold bg-accent-gold/10 px-2 py-1 rounded">
+                                                        Position: {app.jobTitle}
+                                                    </span>
+                                                </div>
+                                            )}
                                             {app.message && (
                                                 <p className="text-gray-200 whitespace-pre-line">{app.message}</p>
                                             )}

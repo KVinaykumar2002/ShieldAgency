@@ -5,7 +5,7 @@ import { StarIcon } from '../../constants';
 import AnimatedSection from './AnimatedSection';
 
 const TestimonialCard: React.FC<{ testimonial: Testimonial }> = ({ testimonial }) => (
-    <div className="w-[350px] h-[220px] bg-glass-bg border border-white/10 rounded-lg p-6 flex flex-col">
+    <div className="w-[280px] sm:w-[320px] md:w-[350px] h-auto min-h-[200px] sm:min-h-[220px] bg-glass-bg border border-white/10 rounded-lg p-4 sm:p-6 flex flex-col">
         <div className="flex mb-3">
             {[...Array(5)].map((_, i) => <StarIcon key={i} className="w-5 h-5 text-accent-gold" />)}
         </div>
@@ -23,11 +23,11 @@ const TestimonialCard: React.FC<{ testimonial: Testimonial }> = ({ testimonial }
 
 const TestimonialScroller: React.FC<{ testimonials: Testimonial[] }> = ({ testimonials }) => {
   return (
-    <section className="py-20 bg-primary-black/50">
+    <section className="py-12 sm:py-16 md:py-20 bg-primary-black/50">
         <div className="container mx-auto">
-            <AnimatedSection className="text-center mb-12 px-4">
-                 <h2 className="text-4xl font-bold">What Our <span className="text-highlight-blue">Clients Say</span></h2>
-                <p className="text-gray-400 mt-2 max-w-2xl mx-auto">Real feedback from partners who trust Shield Agency.</p>
+            <AnimatedSection className="text-center mb-8 sm:mb-12 px-4">
+                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">What Our <span className="text-highlight-blue">Clients Say</span></h2>
+                <p className="text-gray-400 mt-2 max-w-2xl mx-auto text-sm sm:text-base">Real feedback from partners who trust Shield Agency.</p>
             </AnimatedSection>
             <div className="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-200px),transparent_100%)] group">
                 <ul className="flex items-stretch justify-center md:justify-start [&_li]:mx-4 animate-scroll-horizontal group-hover:[animation-play-state:paused]">

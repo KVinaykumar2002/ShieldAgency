@@ -18,14 +18,14 @@ const ServiceCard: React.FC<ServiceItemProps> = ({ icon: Icon, title, descriptio
 
 const OurServicesSection: React.FC = () => {
     return (
-        <section className="pt-32 pb-20 bg-primary-black">
+        <section className="pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 bg-primary-black">
             <div className="container mx-auto px-4">
                 <div className="lg:grid lg:grid-cols-12 lg:gap-8">
                     {/* Left Sticky Heading */}
-                    <div className="lg:col-span-4 lg:sticky lg:top-0 lg:h-screen flex items-center mb-12 lg:mb-0">
+                    <div className="lg:col-span-4 lg:sticky lg:top-0 lg:h-screen flex items-center mb-8 sm:mb-12 lg:mb-0">
                         <AnimatedSection animation="slide-in-from-left" className="w-full">
-                            <h2 className="text-5xl font-bold text-white">Our <span className="text-highlight-blue">Services</span></h2>
-                            <p className="text-gray-300 mt-4 leading-relaxed">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">Our <span className="text-highlight-blue">Services</span></h2>
+                            <p className="text-gray-300 mt-4 leading-relaxed text-sm sm:text-base">
                                 From elite on-site security to meticulous housekeeping, Shield Agency provides a comprehensive suite of services to ensure your environment is safe, clean, and professional.
                             </p>
                         </AnimatedSection>
@@ -35,12 +35,12 @@ const OurServicesSection: React.FC = () => {
                     <div className="lg:col-span-8 lg:h-screen lg:overflow-y-auto lg:py-20 no-scrollbar">
                         <div className="space-y-12">
                             {/* Security Services */}
-                            <div>
+                            <div id="security-services" className="scroll-mt-32">
                                 <AnimatedSection animation="slide-in-from-right">
-                                    <h3 className="text-3xl font-bold text-accent-gold mb-2">Security Services</h3>
-                                    <p className="text-gray-400 mb-6">Professional and reliable protection services tailored for personal, commercial, and high-security environments.</p>
+                                    <h3 className="text-2xl sm:text-3xl font-bold text-accent-gold mb-2">Security Services</h3>
+                                    <p className="text-gray-400 mb-4 sm:mb-6 text-sm sm:text-base">Professional and reliable protection services tailored for personal, commercial, and high-security environments.</p>
                                 </AnimatedSection>
-                                <div className="grid md:grid-cols-2 gap-6">
+                                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                                     {SECURITY_SERVICES.map((service, index) => (
                                         <AnimatedSection key={service.title} animation="slide-in-from-right" delay={`delay-${(index * 100)}`}>
                                             <ServiceCard {...service} />
@@ -50,12 +50,12 @@ const OurServicesSection: React.FC = () => {
                             </div>
                             
                             {/* Housekeeping Services */}
-                            <div>
+                            <div id="housekeeping-services" className="scroll-mt-32">
                                 <AnimatedSection animation="slide-in-from-right">
-                                    <h3 className="text-3xl font-bold text-accent-gold mb-2">Housekeeping Services</h3>
-                                    <p className="text-gray-400 mb-6">Hygienic and high-quality maintenance solutions for residential and commercial properties.</p>
+                                    <h3 className="text-2xl sm:text-3xl font-bold text-accent-gold mb-2">Housekeeping Services</h3>
+                                    <p className="text-gray-400 mb-4 sm:mb-6 text-sm sm:text-base">Hygienic and high-quality maintenance solutions for residential and commercial properties.</p>
                                 </AnimatedSection>
-                                <div className="grid md:grid-cols-2 gap-6">
+                                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                                     {HOUSEKEEPING_SERVICES.map((service, index) => (
                                         <AnimatedSection key={service.title} animation="slide-in-from-right" delay={`delay-${(index * 100)}`}>
                                             <ServiceCard {...service} />
