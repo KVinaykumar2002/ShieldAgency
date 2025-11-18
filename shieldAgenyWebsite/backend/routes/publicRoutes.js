@@ -7,6 +7,7 @@ const { createEnquiry } = require('../controllers/enquiryController');
 const upload = require('../middleware/uploadMiddleware');
 const { getCertifications } = require('../controllers/certificationController');
 const { getGalleryItems } = require('../controllers/galleryController');
+const { getGoogleReviews } = require('../controllers/googleReviewController');
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.get('/testimonials', getTestimonials);
 router.get('/jobs', getJobOpenings);
 router.get('/certifications', getCertifications);
 router.get('/gallery', getGalleryItems);
+router.get('/google-reviews', getGoogleReviews);
 
 // Public POST routes for forms
 router.post('/apply', (req, res, next) => {

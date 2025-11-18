@@ -49,21 +49,21 @@ const Footer: React.FC<FooterProps> = ({ setPage }) => {
                             />
                             <span className="text-xl sm:text-2xl font-bold"></span>
                         </button>
-                        <p className="text-gray-400 text-sm mb-4 sm:mb-6">
+                        <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 md:mb-6 leading-relaxed">
                             Shield Agency is the practice of protecting people, property, and assets from physical threats and unauthorized access.
                         </p>
-                        <h3 className="font-bold text-base sm:text-lg mb-2 text-white">Get In Touch</h3>
+                        <h3 className="font-bold text-sm sm:text-base md:text-lg mb-2 text-white">Get In Touch</h3>
                         <form onSubmit={handleSubscribe}>
-                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center border border-accent-purple rounded-full p-1 focus-within:ring-2 focus-within:ring-accent-purple transition-all gap-2 sm:gap-0">
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center border border-accent-purple rounded-full p-0.5 sm:p-1 focus-within:ring-2 focus-within:ring-accent-purple transition-all gap-2 sm:gap-0">
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="Email address"
                                     required
-                                    className="bg-transparent w-full py-2 sm:py-1 px-3 sm:px-4 text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none"
+                                    className="bg-transparent w-full py-1.5 sm:py-2 md:py-1 px-2 sm:px-3 md:px-4 text-xs sm:text-sm md:text-base text-white placeholder-gray-500 focus:outline-none"
                                 />
-                                <button type="submit" className="bg-accent-purple rounded-full px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold hover:bg-purple-500 transition-colors flex-shrink-0 whitespace-nowrap">
+                                <button type="submit" className="bg-accent-purple rounded-full px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold hover:bg-purple-500 transition-colors flex-shrink-0 whitespace-nowrap">
                                     Submit
                                 </button>
                             </div>
@@ -72,11 +72,11 @@ const Footer: React.FC<FooterProps> = ({ setPage }) => {
 
                     {/* Column 2: Company Links */}
                     <div>
-                        <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Company</h3>
-                        <ul className="space-y-3">
+                        <h3 className="font-bold text-sm sm:text-base md:text-lg mb-2 sm:mb-3 md:mb-4">Company</h3>
+                        <ul className="space-y-2 sm:space-y-2.5 md:space-y-3">
                            {NAV_LINKS.slice(0,4).map(link => (
                                <li key={link.label}>
-                                   <button onClick={() => setPage(link.page, link.subItems?.[0]?.subPageId)} className="text-gray-300 hover:text-white transition-colors">
+                                   <button onClick={() => setPage(link.page, link.subItems?.[0]?.subPageId)} className="text-gray-300 hover:text-white transition-colors text-xs sm:text-sm md:text-base">
                                        {link.label}
                                    </button>
                                </li>
@@ -86,35 +86,34 @@ const Footer: React.FC<FooterProps> = ({ setPage }) => {
 
                     {/* Column 3: Contact and Socials */}
                     <div>
-                        <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Contact</h3>
-                        <ul className="space-y-3 text-gray-300">
-                            <li><a href="tel:+91-9886668368" className="hover:text-white transition-colors underline">+91-9886668368</a></li>
-                            <li><a href="mailto:shieldagency01@gmail.com" className="hover:text-white transition-colors underline">shieldagency01@gmail.com</a></li>
-                            <li className="leading-relaxed text-sm sm:text-base">
-                                Shop No. T2A, D Block, 3rd Floor,<br />
-                                Revankar Complex,<br />
-                                Court Circle, Hubballi - 580 029,<br />
-                                Karnataka
+                        <h3 className="font-bold text-sm sm:text-base md:text-lg mb-2 sm:mb-3 md:mb-4">Contact</h3>
+                        <ul className="space-y-2 sm:space-y-2.5 md:space-y-3 text-gray-300">
+                            <li className="text-xs sm:text-sm md:text-base"><a href="tel:+91-9886668368" className="hover:text-white transition-colors underline break-all">+91-9886668368</a></li>
+                            <li className="text-xs sm:text-sm md:text-base"><a href="mailto:shieldagency01@gmail.com" className="hover:text-white transition-colors underline break-all">shieldagency01@gmail.com</a></li>
+                            <li className="leading-relaxed text-xs sm:text-sm md:text-base">
+                            Shop No. 7, 3rd Floor,<br/> 
+                            Tirumala Trade Centre, Neeligin Road, Traffic Island,<br/>
+                            Hubli - 580 029, Karnataka
                             </li>
                         </ul>
-                        <div className="flex space-x-4 mt-6">
-                           <a href="#" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors"><FacebookIcon /></a>
-                           <a href="#" aria-label="Youtube" className="text-gray-400 hover:text-white transition-colors"><YoutubeIcon /></a>
-                           <a href="#" aria-label="LinkedIn" className="text-gray-400 hover:text-white transition-colors"><LinkedinIcon /></a>
-                           <a href="#" aria-label="Github" className="text-gray-400 hover:text-white transition-colors"><GithubIcon /></a>
+                        <div className="flex space-x-3 sm:space-x-4 mt-4 sm:mt-5 md:mt-6">
+                           <a href="#" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors"><FacebookIcon className="w-4 h-4 sm:w-5 sm:h-5" /></a>
+                           <a href="#" aria-label="Youtube" className="text-gray-400 hover:text-white transition-colors"><YoutubeIcon className="w-4 h-4 sm:w-5 sm:h-5" /></a>
+                           <a href="#" aria-label="LinkedIn" className="text-gray-400 hover:text-white transition-colors"><LinkedinIcon className="w-4 h-4 sm:w-5 sm:h-5" /></a>
+                           <a href="#" aria-label="Github" className="text-gray-400 hover:text-white transition-colors"><GithubIcon className="w-4 h-4 sm:w-5 sm:h-5" /></a>
                         </div>
                     </div>
                 </div>
 
                 {/* Large Brand Name */}
-                <div className="text-center my-8 sm:my-12 md:my-16">
-                    <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter text-white opacity-90">
+                <div className="text-center my-6 sm:my-8 md:my-12 lg:my-16">
+                    <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-extrabold tracking-tighter text-white opacity-90 px-2">
                         Shield Agency
                     </h1>
                 </div>
 
                 {/* Copyright */}
-                <div className="border-t border-gray-800 pt-6 sm:pt-8 text-center text-gray-500 text-xs sm:text-sm space-y-2">
+                <div className="border-t border-gray-800 pt-4 sm:pt-6 md:pt-8 text-center text-gray-500 text-xs sm:text-sm space-y-1 sm:space-y-2 px-2">
                     <p>&copy; {new Date().getFullYear()} Shield Agency. All Rights Reserved.</p>
                     {/* ,<p className="text-gray-400">Developed by <span className="text-accent-gold font-semibold">OptiWebrix Team</span></p> */}
                 </div>

@@ -23,7 +23,7 @@ const MailButton: React.FC<MailButtonProps> = ({
   return (
     <button
       onClick={handleMailClick}
-      className="group relative w-14 h-14 sm:w-16 sm:h-16 bg-[#EA4335] rounded-full shadow-2xl hover:shadow-[#EA4335]/50 transition-all duration-300 hover:scale-110 flex items-center justify-center cursor-pointer mt-2 sm:mt-3"
+      className="group relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-[#EA4335] rounded-full shadow-2xl hover:shadow-[#EA4335]/50 transition-all duration-300 hover:scale-110 flex items-center justify-center cursor-pointer"
       aria-label="Contact us via Email"
       title="Send us an email"
     >
@@ -32,12 +32,12 @@ const MailButton: React.FC<MailButtonProps> = ({
         
         {/* Mail Icon */}
         <svg
-          width="28"
-          height="28"
+          width="24"
+          height="24"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="text-white relative z-10 sm:w-8 sm:h-8"
+          className="text-white relative z-10 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"
         >
           <path
             d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"

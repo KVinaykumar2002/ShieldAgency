@@ -45,7 +45,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ setPage }) => {
 
     return (
         <section 
-            className="relative min-h-[70vh] md:h-screen w-full overflow-hidden"
+            className="relative h-screen w-full overflow-hidden"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -67,22 +67,22 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ setPage }) => {
             ))}
 
             {/* Content Overlay */}
-            <div className="relative z-20 h-full flex items-start md:items-center justify-start md:justify-center text-white px-4 sm:px-6 md:px-8 lg:px-12 pt-20 sm:pt-24 md:pt-0 pb-12 sm:pb-16">
+            <div className="relative z-20 h-full flex items-center justify-center text-white px-4 sm:px-6 md:px-8 lg:px-12 py-16 sm:py-20 md:py-0">
                  <div 
                     key={currentIndex} // Re-trigger animation on slide change
-                    className="relative max-w-2xl md:max-w-3xl w-full animate-slide-up-fade-in text-left md:text-center space-y-4 sm:space-y-5"
+                    className="relative max-w-2xl md:max-w-3xl w-full animate-slide-up-fade-in text-center space-y-4 sm:space-y-5 md:space-y-6"
                  >
-                    <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold leading-tight px-2 sm:px-0" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                        {CAROUSEL_SLIDES[currentIndex].title}
                     </h1>
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg md:max-w-2xl md:mx-auto text-gray-200 px-2 sm:px-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
+                    <p className="text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto text-gray-200 px-2 sm:px-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
                         {CAROUSEL_SLIDES[currentIndex].description}
                     </p>
-                    <div className="flex md:justify-center px-2 sm:px-0">
+                    <div className="flex justify-center">
                         <Button 
                             onClick={() => setPage(CAROUSEL_SLIDES[currentIndex].ctaPage, CAROUSEL_SLIDES[currentIndex].ctaSubPageId)} 
                             variant="secondary"
-                            className="min-w-[8rem] sm:min-w-[10rem] py-2.5 sm:py-3 text-xs sm:text-sm md:text-base"
+                            className="min-w-[10rem] sm:min-w-[12rem] md:min-w-[14rem]"
                         >
                             {CAROUSEL_SLIDES[currentIndex].ctaText}
                         </Button>
@@ -93,17 +93,17 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ setPage }) => {
             {/* Navigation Arrows */}
             <button 
                 onClick={prevSlide} 
-                className="hidden sm:flex absolute z-30 top-1/2 left-4 md:left-8 transform -translate-y-1/2 bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all duration-300 backdrop-blur-sm hover:shadow-lg hover:shadow-white/10"
+                className="absolute z-30 top-1/2 left-2 sm:left-4 md:left-8 transform -translate-y-1/2 bg-white/10 hover:bg-white/20 active:bg-white/30 p-2 sm:p-2.5 md:p-3 rounded-full transition-all duration-300 backdrop-blur-sm hover:shadow-lg hover:shadow-white/10 touch-manipulation"
                 aria-label="Previous slide"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
             <button 
                 onClick={nextSlide} 
-                className="hidden sm:flex absolute z-30 top-1/2 right-4 md:right-8 transform -translate-y-1/2 bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all duration-300 backdrop-blur-sm hover:shadow-lg hover:shadow-white/10"
+                className="absolute z-30 top-1/2 right-2 sm:right-4 md:right-8 transform -translate-y-1/2 bg-white/10 hover:bg-white/20 active:bg-white/30 p-2 sm:p-2.5 md:p-3 rounded-full transition-all duration-300 backdrop-blur-sm hover:shadow-lg hover:shadow-white/10 touch-manipulation"
                 aria-label="Next slide"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
             </button>
 
             {/* Pagination Dots */}
@@ -112,7 +112,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ setPage }) => {
                     <button 
                         key={index}
                         onClick={() => goToSlide(index)}
-                        className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${currentIndex === index ? 'bg-accent-gold scale-125 shadow-lg shadow-accent-gold/50' : 'bg-white/40 hover:bg-white/70'}`}
+                        className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full transition-all duration-300 touch-manipulation ${currentIndex === index ? 'bg-accent-gold scale-125 shadow-lg shadow-accent-gold/50' : 'bg-white/40 hover:bg-white/70 active:bg-white/90'}`}
                         aria-label={`Go to slide ${index + 1}`}
                     />
                 ))}

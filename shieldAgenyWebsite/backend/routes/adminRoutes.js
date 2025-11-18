@@ -21,6 +21,12 @@ const {
 const { getDashboardStats } = require('../controllers/dashboardController');
 const { createTraining, getTrainings, updateTraining, deleteTraining } = require('../controllers/trainingController');
 const { createCustomer, getCustomers, updateCustomer, deleteCustomer } = require('../controllers/customerController');
+const {
+  getGoogleReviews,
+  createGoogleReview,
+  updateGoogleReview,
+  deleteGoogleReview,
+} = require('../controllers/googleReviewController');
 // Add other controllers as you create them
 
 const router = express.Router();
@@ -62,6 +68,10 @@ router.route('/trainings/:id').put(updateTraining).delete(deleteTraining);
 // Customer Routes
 router.route('/customers').get(getCustomers).post(createCustomer);
 router.route('/customers/:id').put(updateCustomer).delete(deleteCustomer);
+
+// Google Reviews Routes
+router.route('/google-reviews').get(getGoogleReviews).post(createGoogleReview);
+router.route('/google-reviews/:id').put(updateGoogleReview).delete(deleteGoogleReview);
 
 // Add routes for Testimonials, Jobs, Management etc. here following the same pattern.
 // Example:

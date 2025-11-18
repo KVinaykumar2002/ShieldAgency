@@ -7,13 +7,13 @@ import { roleStorage } from '../utils/api';
 const CompanyLogo: React.FC<{ onClick: () => void }> = ({ onClick }) => (
     <button
         onClick={onClick}
-        className="flex items-center space-x-3 cursor-pointer flex-shrink-0 bg-transparent border-0 p-0"
+        className="flex items-center space-x-2 sm:space-x-3 cursor-pointer flex-shrink-0 bg-transparent border-0 p-0"
         aria-label="Shield Agency Home"
     >
         <img
-            src="/LOGO-02.png"
+            src="/image.png"
             alt="Shield Agency Logo"
-            className="h-8 sm:h-10 md:h-12 w-auto object-contain drop-shadow-lg"
+            className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto object-contain drop-shadow-lg"
         />
     </button>
 );
@@ -74,31 +74,31 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
     };
     
     const MobileNavLinks = () => (
-        <ul className="flex flex-col space-y-2">
+        <ul className="flex flex-col space-y-1 sm:space-y-2">
             {NAV_LINKS.map((item) => (
                 <li key={item.label} className="border-b border-zinc-700 last:border-b-0">
                     {item.subItems ? (
                         <>
                             <button
-                                className="w-full flex justify-between items-center py-3 text-white font-medium"
+                                className="w-full flex justify-between items-center py-2.5 sm:py-3 text-white font-medium text-sm sm:text-base"
                                 onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
                             >
                                 {item.label}
-                                <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-transform duration-300 ${openDropdown === item.label ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 ${openDropdown === item.label ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                             </button>
-                            <div className={`pl-4 overflow-hidden transition-all duration-300 ease-in-out ${openDropdown === item.label ? 'max-h-[600px]' : 'max-h-0'}`}>
-                                <ul className="py-2 space-y-1">
+                            <div className={`pl-3 sm:pl-4 overflow-hidden transition-all duration-300 ease-in-out ${openDropdown === item.label ? 'max-h-[600px]' : 'max-h-0'}`}>
+                                <ul className="py-1.5 sm:py-2 space-y-0.5 sm:space-y-1">
                                     {item.subItems.map((sub, index) => (
                                         <li key={sub.label}>
                                             {sub.isCategory && index > 0 && (
-                                                <div className="border-t border-zinc-600/50 my-2"></div>
+                                                <div className="border-t border-zinc-600/50 my-1.5 sm:my-2"></div>
                                             )}
                                             <button 
                                                 onClick={() => handleLinkClick(sub.page, sub.subPageId)} 
-                                                className={`w-full text-left transition-colors duration-200 ${
+                                                className={`w-full text-left transition-colors duration-200 text-xs sm:text-sm ${
                                                     sub.isCategory 
-                                                        ? 'text-accent-gold font-semibold hover:text-accent-gold py-2' 
-                                                        : 'text-gray-300 hover:text-accent-gold pl-4 py-1.5'
+                                                        ? 'text-accent-gold font-semibold hover:text-accent-gold py-1.5 sm:py-2' 
+                                                        : 'text-gray-300 hover:text-accent-gold pl-3 sm:pl-4 py-1 sm:py-1.5'
                                                 }`}
                                             >
                                                 {sub.label}
@@ -109,7 +109,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
                             </div>
                         </>
                     ) : (
-                        <button onClick={() => handleLinkClick(item.page)} className="w-full text-left py-3 text-white font-medium">
+                        <button onClick={() => handleLinkClick(item.page)} className="w-full text-left py-2.5 sm:py-3 text-white font-medium text-sm sm:text-base">
                             {item.label}
                         </button>
                     )}
@@ -119,8 +119,8 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
     );
 
     return (
-        <header className="fixed top-0 left-0 w-full z-50 p-2 sm:p-4">
-            <nav className={`w-full max-w-7xl mx-auto flex items-center justify-between p-2 sm:p-3 bg-zinc-900 border border-white/10 transition-all duration-500 ease-in-out ${isScrolled ? 'rounded-[20px] sm:rounded-[30px] shadow-2xl shadow-black/60' : 'rounded-lg sm:rounded-xl'}`}>
+        <header className="fixed top-0 left-0 w-full z-50 p-1.5 sm:p-2 md:p-4">
+            <nav className={`w-full max-w-7xl mx-auto flex items-center justify-between p-1.5 sm:p-2 md:p-3 bg-zinc-900 border border-white/10 transition-all duration-500 ease-in-out ${isScrolled ? 'rounded-[12px] sm:rounded-[20px] md:rounded-[30px] shadow-2xl shadow-black/60' : 'rounded-md sm:rounded-lg md:rounded-xl'}`}>
                 <CompanyLogo onClick={() => handleLinkClick('Home')} />
 
                 <div className="hidden lg:flex items-center space-x-2">
@@ -134,8 +134,8 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
                                 {item.subItems && <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>}
                             </button>
                             {item.subItems && (
-                                <div className={`absolute top-full left-1/2 -translate-x-1/2 pt-4 transition-all duration-300 ${openDropdown === item.label ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
-                                    <ul className="bg-zinc-800/80 backdrop-blur-lg border border-zinc-700 rounded-xl shadow-2xl p-2 min-w-[220px] max-h-[80vh] overflow-y-auto">
+                                <div className={`absolute top-full left-1/2 -translate-x-1/2 pt-2 sm:pt-4 transition-all duration-300 ${openDropdown === item.label ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
+                                    <ul className="bg-zinc-800/95 backdrop-blur-lg border border-zinc-700 rounded-lg sm:rounded-xl shadow-2xl p-1.5 sm:p-2 min-w-[200px] sm:min-w-[220px] max-w-[90vw] max-h-[80vh] overflow-y-auto">
                                         {item.subItems.map((sub, index) => (
                                             <li key={sub.label}>
                                                 {sub.isCategory && index > 0 && (
@@ -143,10 +143,10 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
                                                 )}
                                                 <button 
                                                     onClick={() => handleLinkClick(sub.page, sub.subPageId)} 
-                                                    className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-200 text-sm ${
+                                                    className={`w-full text-left px-3 sm:px-4 py-1.5 sm:py-2 rounded-md transition-colors duration-200 text-xs sm:text-sm ${
                                                         sub.isCategory 
                                                             ? 'text-accent-gold font-semibold hover:bg-accent-gold/20 hover:text-accent-gold' 
-                                                            : 'text-gray-200 hover:bg-highlight-blue/50 hover:text-white pl-8'
+                                                            : 'text-gray-200 hover:bg-highlight-blue/50 hover:text-white pl-6 sm:pl-8'
                                                     }`}
                                                 >
                                                     {sub.label}
@@ -225,15 +225,14 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
                 </div>
                 
                 <div className="lg:hidden">
-                    <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white p-2 mr-1">
-{/* Fix: Corrected typo in SVG viewBox attribute from `viewBox="0 0 24" 24"` to `viewBox="0 0 24 24"`. */}
-                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}></path></svg>
+                    <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white p-1.5 sm:p-2 mr-0.5 sm:mr-1 focus:outline-none focus:ring-2 focus:ring-accent-gold rounded-md">
+                         <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}></path></svg>
                     </button>
                 </div>
             </nav>
 
-            <div className={`lg:hidden absolute top-[calc(100%+0.5rem)] left-0 w-full px-2 sm:px-4 transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'}`}>
-                 <div className="p-3 sm:p-4 bg-zinc-900/80 backdrop-blur-xl border border-zinc-700 rounded-xl sm:rounded-2xl shadow-2xl shadow-black/30 max-h-[calc(100vh-120px)] overflow-y-auto">
+            <div className={`lg:hidden absolute top-[calc(100%+0.25rem)] sm:top-[calc(100%+0.5rem)] left-0 w-full px-2 sm:px-4 transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'}`}>
+                 <div className="p-2.5 sm:p-3 md:p-4 bg-zinc-900/95 backdrop-blur-xl border border-zinc-700 rounded-lg sm:rounded-xl md:rounded-2xl shadow-2xl shadow-black/30 max-h-[calc(100vh-100px)] sm:max-h-[calc(100vh-120px)] overflow-y-auto">
                     <MobileNavLinks />
                  </div>
             </div>
