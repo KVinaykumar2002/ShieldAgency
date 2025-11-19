@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Page } from '../types';
-import { NAV_LINKS, FacebookIcon, YoutubeIcon, LinkedinIcon, GithubIcon } from '../constants';
+import { NAV_LINKS, FacebookIcon, YoutubeIcon, LinkedinIcon, GithubIcon, MailIcon, PhoneIcon, MapPinIcon } from '../constants';
 
 interface FooterProps {
     setPage: (page: Page, subPageId?: string) => void;
@@ -88,12 +88,21 @@ const Footer: React.FC<FooterProps> = ({ setPage }) => {
                     <div>
                         <h3 className="font-bold text-sm sm:text-base md:text-lg mb-2 sm:mb-3 md:mb-4">Contact</h3>
                         <ul className="space-y-2 sm:space-y-2.5 md:space-y-3 text-gray-300">
-                            <li className="text-xs sm:text-sm md:text-base"><a href="tel:+91-9886668368" className="hover:text-white transition-colors underline break-all">+91-9886668368</a></li>
-                            <li className="text-xs sm:text-sm md:text-base"><a href="mailto:shieldagency01@gmail.com" className="hover:text-white transition-colors underline break-all">shieldagency01@gmail.com</a></li>
-                            <li className="leading-relaxed text-xs sm:text-sm md:text-base">
-                            Shop No. 7, 3rd Floor,<br/> 
-                            Tirumala Trade Centre, Neeligin Road, Traffic Island,<br/>
-                            Hubli - 580 029, Karnataka
+                            <li className="flex items-start gap-2 sm:gap-3 text-xs sm:text-sm md:text-base">
+                                <PhoneIcon className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0 text-accent-gold" />
+                                <a href="tel:+91-9886668368" className="hover:text-white transition-colors underline break-all">+91-9886668368</a>
+                            </li>
+                            <li className="flex items-start gap-2 sm:gap-3 text-xs sm:text-sm md:text-base">
+                                <MailIcon className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0 text-accent-gold" />
+                                <a href="mailto:shieldagency01@gmail.com" className="hover:text-white transition-colors underline break-all">shieldagency01@gmail.com</a>
+                            </li>
+                            <li className="flex items-start gap-2 sm:gap-3 leading-relaxed text-xs sm:text-sm md:text-base">
+                                <MapPinIcon className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0 text-accent-gold" />
+                                <span>
+                                    Shop No. 7, 3rd Floor,<br/> 
+                                    Tirumala Trade Centre, Neeligin Road, Traffic Island,<br/>
+                                    Hubli - 580 029, Karnataka
+                                </span>
                             </li>
                         </ul>
                         <div className="flex space-x-3 sm:space-x-4 mt-4 sm:mt-5 md:mt-6">

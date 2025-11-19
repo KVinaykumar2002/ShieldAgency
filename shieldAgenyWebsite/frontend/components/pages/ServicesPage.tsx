@@ -4,7 +4,12 @@ import AnimatedSection from '../ui/AnimatedSection';
 import Button from '../ui/Button';
 import { contactAPI } from '../../utils/api';
 
-const ServicesPage: React.FC = () => {
+interface ServicesPageProps {
+    activeServiceId?: string | null;
+    highlightedServiceId?: string | null;
+}
+
+const ServicesPage: React.FC<ServicesPageProps> = ({ activeServiceId, highlightedServiceId }) => {
     const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -32,7 +37,7 @@ const ServicesPage: React.FC = () => {
 
     return (
         <div>
-            <OurServicesSection />
+            <OurServicesSection activeServiceId={activeServiceId} highlightedServiceId={highlightedServiceId} />
             
             {/* Enquiry Now Section */}
             <section className="py-12 sm:py-16 md:py-20">

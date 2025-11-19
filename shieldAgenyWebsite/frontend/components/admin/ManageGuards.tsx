@@ -55,6 +55,13 @@ const ManageGuards: React.FC = () => {
 
   useEffect(() => {
     loadGuards();
+    
+    // Auto-refresh every 2 minutes
+    const refreshInterval = setInterval(() => {
+      loadGuards();
+    }, 2 * 60 * 1000);
+
+    return () => clearInterval(refreshInterval);
   }, []);
 
   const openCreateModal = () => {
@@ -198,13 +205,13 @@ const ManageGuards: React.FC = () => {
   return (
     <div>
       <AnimatedSection>
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Manage Guards &amp; Bouncers</h1>
-          <Button variant="secondary" onClick={openCreateModal}>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold">Manage Guards &amp; Bouncers</h1>
+          <Button variant="secondary" onClick={openCreateModal} className="w-full sm:w-auto">
             Add New Guard
           </Button>
         </div>
-        <div className="flex items-center mb-4 bg-white/5 border border-white/10 rounded-lg px-4">
+        <div className="flex items-center mb-4 bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -215,7 +222,7 @@ const ManageGuards: React.FC = () => {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-gray-400"
+            className="text-gray-400 flex-shrink-0"
           >
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -223,57 +230,122 @@ const ManageGuards: React.FC = () => {
           <input
             type="text"
             placeholder="Search by name, region, or shift..."
-            className="bg-transparent w-full p-3 placeholder-gray-500 focus:outline-none"
+            className="bg-transparent w-full p-2 sm:p-3 placeholder-gray-500 focus:outline-none text-sm sm:text-base"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         {success && (
-          <p className="text-sm text-emerald-400 mt-2">{success}</p>
+          <div className="mb-3 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+            <p className="text-sm text-emerald-400">{success}</p>
+          </div>
         )}
         {error && (
-          <p className="text-sm text-red-400 mt-2">{error}</p>
+          <div className="mb-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <p className="text-sm text-red-400">{error}</p>
+          </div>
         )}
       </AnimatedSection>
 
       <AnimatedSection delay="delay-200">
-        <div className="bg-glass-bg backdrop-blur-xl border border-white/10 rounded-lg overflow-x-auto">
+        <div className="bg-glass-bg backdrop-blur-xl border border-white/10 rounded-lg overflow-hidden">
           {loading ? (
-            <p className="p-4 text-gray-300">Loading guard roster...</p>
+            <div className="p-8 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent-gold mb-4"></div>
+              <p className="text-gray-300">Loading guard roster...</p>
+            </div>
           ) : filteredGuards.length === 0 ? (
-            <p className="p-4 text-gray-300">No guards match your search.</p>
+            <div className="p-8 text-center">
+              <p className="text-gray-300">No guards match your search.</p>
+            </div>
           ) : (
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="p-4 font-semibold">Guard ID</th>
-                  <th className="p-4 font-semibold">Name</th>
-                  <th className="p-4 font-semibold">Location</th>
-                  <th className="p-4 font-semibold">Shift</th>
-                  <th className="p-4 font-semibold">Status</th>
-                  <th className="p-4 font-semibold">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="p-3 sm:p-4 font-semibold text-sm">Guard ID</th>
+                      <th className="p-3 sm:p-4 font-semibold text-sm">Name</th>
+                      <th className="p-3 sm:p-4 font-semibold text-sm">Location</th>
+                      <th className="p-3 sm:p-4 font-semibold text-sm">Shift</th>
+                      <th className="p-3 sm:p-4 font-semibold text-sm">Status</th>
+                      <th className="p-3 sm:p-4 font-semibold text-sm">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredGuards.map((guard) => (
+                      <tr
+                        key={guard._id}
+                        className="border-b border-white/10 last:border-b-0 hover:bg-white/5 transition-colors"
+                      >
+                        <td className="p-3 sm:p-4 text-gray-300 text-sm">{guard.id}</td>
+                        <td className="p-3 sm:p-4">
+                          <div className="flex items-center">
+                            <img
+                              src={guard.image || 'https://picsum.photos/seed/guard/100/100'}
+                              alt={guard.name}
+                              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 flex-shrink-0"
+                            />
+                            <span className="text-sm sm:text-base">{guard.name}</span>
+                          </div>
+                        </td>
+                        <td className="p-3 sm:p-4 text-gray-300 text-sm">{guard.location}</td>
+                        <td className="p-3 sm:p-4 text-gray-300 text-sm">{guard.shift}</td>
+                        <td className="p-3 sm:p-4">
+                          <span
+                            className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                              guard.status === 'Active'
+                                ? 'bg-green-500/20 text-green-300'
+                                : 'bg-yellow-500/20 text-yellow-300'
+                            }`}
+                          >
+                            {guard.status}
+                          </span>
+                        </td>
+                        <td className="p-3 sm:p-4">
+                          <div className="flex space-x-2 sm:space-x-3">
+                            <button
+                              className="text-highlight-blue hover:underline text-sm touch-manipulation"
+                              onClick={() => openEditModal(guard)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="text-red-400 hover:underline text-sm touch-manipulation"
+                              onClick={() => handleDelete(guard._id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              {/* Mobile Card View */}
+              <div className="md:hidden divide-y divide-white/10">
                 {filteredGuards.map((guard) => (
-                  <tr
+                  <div
                     key={guard._id}
-                    className="border-b border-white/10 last:border-b-0 hover:bg-white/5 transition-colors"
+                    className="p-4 hover:bg-white/5 transition-colors"
                   >
-                    <td className="p-4 text-gray-300">{guard.id}</td>
-                    <td className="p-4 flex items-center">
-                      <img
-                        src={guard.image || 'https://picsum.photos/seed/guard/100/100'}
-                        alt={guard.name}
-                        className="w-10 h-10 rounded-full mr-3"
-                      />
-                      <span>{guard.name}</span>
-                    </td>
-                    <td className="p-4 text-gray-300">{guard.location}</td>
-                    <td className="p-4 text-gray-300">{guard.shift}</td>
-                    <td className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center flex-1 min-w-0">
+                        <img
+                          src={guard.image || 'https://picsum.photos/seed/guard/100/100'}
+                          alt={guard.name}
+                          className="w-12 h-12 rounded-full mr-3 flex-shrink-0"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-semibold text-white truncate">{guard.name}</h3>
+                          <p className="text-xs text-gray-400">ID: {guard.id}</p>
+                        </div>
+                      </div>
                       <span
-                        className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        className={`px-2 py-1 text-xs font-semibold rounded-full flex-shrink-0 ml-2 ${
                           guard.status === 'Active'
                             ? 'bg-green-500/20 text-green-300'
                             : 'bg-yellow-500/20 text-yellow-300'
@@ -281,27 +353,35 @@ const ManageGuards: React.FC = () => {
                       >
                         {guard.status}
                       </span>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex space-x-3">
-                        <button
-                          className="text-highlight-blue hover:underline"
-                          onClick={() => openEditModal(guard)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="text-red-400 hover:underline"
-                          onClick={() => handleDelete(guard._id)}
-                        >
-                          Delete
-                        </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+                      <div>
+                        <span className="text-gray-400">Location:</span>
+                        <p className="text-white">{guard.location}</p>
                       </div>
-                    </td>
-                  </tr>
+                      <div>
+                        <span className="text-gray-400">Shift:</span>
+                        <p className="text-white">{guard.shift}</p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-3 pt-2 border-t border-white/10">
+                      <button
+                        className="flex-1 px-3 py-2 bg-highlight-blue/20 text-highlight-blue rounded-lg font-medium text-sm hover:bg-highlight-blue/30 transition-colors touch-manipulation"
+                        onClick={() => openEditModal(guard)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="flex-1 px-3 py-2 bg-red-500/20 text-red-400 rounded-lg font-medium text-sm hover:bg-red-500/30 transition-colors touch-manipulation"
+                        onClick={() => handleDelete(guard._id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </>
           )}
         </div>
       </AnimatedSection>
@@ -310,8 +390,9 @@ const ManageGuards: React.FC = () => {
         isOpen={isModalOpen}
         onClose={closeModal}
         title={editingGuardId ? 'Edit Guard' : 'Add New Guard'}
+        size="md"
       >
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form className="space-y-3 sm:space-y-4" onSubmit={handleSubmit}>
           <input
             type="text"
             name="id"
@@ -319,7 +400,7 @@ const ManageGuards: React.FC = () => {
             value={formState.id}
             onChange={handleInputChange}
             required
-            className="w-full p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue"
+            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
             disabled={!!editingGuardId}
           />
           <input
@@ -329,7 +410,7 @@ const ManageGuards: React.FC = () => {
             value={formState.name}
             onChange={handleInputChange}
             required
-            className="w-full p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue"
+            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
           />
           <input
             type="text"
@@ -338,14 +419,14 @@ const ManageGuards: React.FC = () => {
             value={formState.location}
             onChange={handleInputChange}
             required
-            className="w-full p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue"
+            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
           />
           <select
             name="shift"
             value={formState.shift}
             onChange={handleInputChange}
             required
-            className="w-full p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue appearance-none"
+            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue appearance-none text-sm sm:text-base"
           >
             {shiftOptions.map((shift) => (
               <option key={shift} value={shift}>
@@ -360,14 +441,14 @@ const ManageGuards: React.FC = () => {
             value={formState.contact}
             onChange={handleInputChange}
             required
-            className="w-full p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue"
+            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
           />
           <select
             name="status"
             value={formState.status}
             onChange={handleInputChange}
             required
-            className="w-full p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue appearance-none"
+            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue appearance-none text-sm sm:text-base"
           >
             {statusOptions.map((status) => (
               <option key={status} value={status}>
@@ -376,34 +457,38 @@ const ManageGuards: React.FC = () => {
             ))}
           </select>
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-300">Upload Profile Image (optional)</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-300">Upload Profile Image (optional)</label>
             <input
               type="file"
               name="image"
               accept="image/*"
               onChange={handleImageUpload}
-              className="w-full p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue file:bg-white/20 file:border-0 file:mr-3 file:px-4 file:py-2 file:rounded-md"
+              className="w-full p-2 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue file:bg-white/20 file:border-0 file:mr-2 sm:file:mr-3 file:px-3 sm:file:px-4 file:py-1.5 sm:file:py-2 file:rounded-md file:text-xs sm:file:text-sm text-xs sm:text-sm"
             />
-            {imageLoading && <p className="text-sm text-gray-400">Processing image...</p>}
+            {imageLoading && <p className="text-xs sm:text-sm text-gray-400">Processing image...</p>}
             {formState.image && (
               <div className="flex items-center space-x-3">
-                <img src={formState.image} alt="Preview" className="w-12 h-12 rounded-full object-cover border border-white/20" />
+                <img src={formState.image} alt="Preview" className="w-12 h-12 rounded-full object-cover border border-white/20 flex-shrink-0" />
                 <button
                   type="button"
                   onClick={clearImage}
-                  className="text-sm text-red-400 hover:underline"
+                  className="text-xs sm:text-sm text-red-400 hover:underline touch-manipulation"
                 >
                   Remove image
                 </button>
               </div>
             )}
           </div>
-          {modalError && <p className="text-red-400 text-sm">{modalError}</p>}
-          <div className="flex justify-end pt-4 space-x-3">
-            <Button variant="secondary" type="button" onClick={closeModal}>
+          {modalError && (
+            <div className="p-2.5 sm:p-3 bg-red-500/10 border border-red-500/30 rounded-md">
+              <p className="text-red-400 text-xs sm:text-sm">{modalError}</p>
+            </div>
+          )}
+          <div className="flex flex-col-reverse sm:flex-row justify-end pt-3 sm:pt-4 gap-2 sm:gap-3">
+            <Button variant="secondary" type="button" onClick={closeModal} className="w-full sm:w-auto">
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting}>
+            <Button type="submit" disabled={submitting} className="w-full sm:w-auto">
               {submitting ? 'Saving...' : editingGuardId ? 'Update Guard' : 'Add Guard'}
             </Button>
           </div>

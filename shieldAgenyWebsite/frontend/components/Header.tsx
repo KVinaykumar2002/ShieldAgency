@@ -32,6 +32,8 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const leaveTimeout = useRef<number | null>(null);
     const userMenuRef = useRef<HTMLDivElement>(null);
+    const mobileMenuRef = useRef<HTMLDivElement>(null);
+    const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -57,6 +59,34 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [isUserMenuOpen]);
+
+    // Close mobile menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                isMobileMenuOpen &&
+                mobileMenuRef.current &&
+                mobileMenuButtonRef.current &&
+                !mobileMenuRef.current.contains(event.target as Node) &&
+                !mobileMenuButtonRef.current.contains(event.target as Node)
+            ) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        if (isMobileMenuOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+            // Prevent body scroll when menu is open
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.body.style.overflow = '';
+        };
+    }, [isMobileMenuOpen]);
     
     const handleLinkClick = (page: Page, subPageId?: string) => {
         setPage(page, subPageId);
@@ -74,53 +104,122 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
     };
     
     const MobileNavLinks = () => (
-        <ul className="flex flex-col space-y-1 sm:space-y-2">
-            {NAV_LINKS.map((item) => (
-                <li key={item.label} className="border-b border-zinc-700 last:border-b-0">
-                    {item.subItems ? (
-                        <>
-                            <button
-                                className="w-full flex justify-between items-center py-2.5 sm:py-3 text-white font-medium text-sm sm:text-base"
-                                onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+        <>
+            <ul className="flex flex-col space-y-1 sm:space-y-2">
+                {NAV_LINKS.map((item) => (
+                    <li key={item.label} className="border-b border-zinc-700 last:border-b-0">
+                        {item.subItems ? (
+                            <>
+                                <button
+                                    className={`w-full flex justify-between items-center py-2.5 sm:py-3 font-medium text-sm sm:text-base transition-colors duration-200 ${
+                                        activePage === item.page 
+                                            ? 'text-accent-gold bg-accent-gold/10' 
+                                            : 'text-white hover:text-accent-gold hover:bg-zinc-800/50'
+                                    }`}
+                                    onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                                >
+                                    {item.label}
+                                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 ${openDropdown === item.label ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                </button>
+                                <div className={`pl-3 sm:pl-4 overflow-hidden transition-all duration-300 ease-in-out ${openDropdown === item.label ? 'max-h-[600px]' : 'max-h-0'}`}>
+                                    <ul className="py-1.5 sm:py-2 space-y-0.5 sm:space-y-1">
+                                        {item.subItems.map((sub, index) => (
+                                            <li key={sub.label}>
+                                                {sub.isCategory && index > 0 && (
+                                                    <div className="border-t border-zinc-600/50 my-1.5 sm:my-2"></div>
+                                                )}
+                                                <button 
+                                                    onClick={() => handleLinkClick(sub.page, sub.subPageId)} 
+                                                    className={`w-full text-left transition-colors duration-200 text-xs sm:text-sm rounded-md ${
+                                                        sub.isCategory 
+                                                            ? 'text-accent-gold font-semibold hover:text-accent-gold py-1.5 sm:py-2' 
+                                                            : `pl-3 sm:pl-4 py-1 sm:py-1.5 ${
+                                                                activePage === sub.page 
+                                                                    ? 'text-accent-gold bg-accent-gold/10 font-medium' 
+                                                                    : 'text-gray-300 hover:text-accent-gold hover:bg-zinc-800/50'
+                                                            }`
+                                                    }`}
+                                                >
+                                                    {sub.label}
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </>
+                        ) : (
+                            <button 
+                                onClick={() => handleLinkClick(item.page)} 
+                                className={`w-full text-left py-2.5 sm:py-3 font-medium text-sm sm:text-base transition-colors duration-200 rounded-md ${
+                                    activePage === item.page 
+                                        ? 'text-accent-gold bg-accent-gold/10' 
+                                        : 'text-white hover:text-accent-gold hover:bg-zinc-800/50'
+                                }`}
                             >
                                 {item.label}
-                                <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 ${openDropdown === item.label ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                             </button>
-                            <div className={`pl-3 sm:pl-4 overflow-hidden transition-all duration-300 ease-in-out ${openDropdown === item.label ? 'max-h-[600px]' : 'max-h-0'}`}>
-                                <ul className="py-1.5 sm:py-2 space-y-0.5 sm:space-y-1">
-                                    {item.subItems.map((sub, index) => (
-                                        <li key={sub.label}>
-                                            {sub.isCategory && index > 0 && (
-                                                <div className="border-t border-zinc-600/50 my-1.5 sm:my-2"></div>
-                                            )}
-                                            <button 
-                                                onClick={() => handleLinkClick(sub.page, sub.subPageId)} 
-                                                className={`w-full text-left transition-colors duration-200 text-xs sm:text-sm ${
-                                                    sub.isCategory 
-                                                        ? 'text-accent-gold font-semibold hover:text-accent-gold py-1.5 sm:py-2' 
-                                                        : 'text-gray-300 hover:text-accent-gold pl-3 sm:pl-4 py-1 sm:py-1.5'
-                                                }`}
-                                            >
-                                                {sub.label}
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </>
-                    ) : (
-                        <button onClick={() => handleLinkClick(item.page)} className="w-full text-left py-2.5 sm:py-3 text-white font-medium text-sm sm:text-base">
-                            {item.label}
+                        )}
+                    </li>
+                ))}
+            </ul>
+            {/* Login/User section for mobile */}
+            <div className="mt-4 pt-4 border-t border-zinc-700">
+                {isAuthenticated ? (
+                    <div className="flex flex-col space-y-2">
+                        {(() => {
+                            const role = roleStorage.getRole();
+                            if (role === 'admin') {
+                                return (
+                                    <button 
+                                        onClick={() => {
+                                            const currentRole = roleStorage.getRole();
+                                            if (currentRole === 'admin') {
+                                                handleLinkClick('Admin');
+                                            } else {
+                                                handleLinkClick('Home');
+                                            }
+                                        }} 
+                                        className={`w-full text-left px-3 py-2.5 rounded-md font-medium text-sm transition-colors duration-200 ${
+                                            activePage === 'Admin'
+                                                ? 'text-accent-gold bg-accent-gold/10'
+                                                : 'text-gray-200 hover:bg-highlight-blue/50 hover:text-white'
+                                        }`}
+                                    >
+                                        Dashboard
+                                    </button>
+                                );
+                            }
+                            return null;
+                        })()}
+                        <button 
+                            onClick={() => {
+                                onLogout();
+                            }} 
+                            className="w-full text-left px-3 py-2.5 rounded-md font-medium text-sm text-gray-200 hover:bg-highlight-blue/50 hover:text-white transition-colors duration-200"
+                        >
+                            Logout
                         </button>
-                    )}
-                </li>
-            ))}
-        </ul>
+                    </div>
+                ) : (
+                    <Button 
+                        onClick={() => handleLinkClick('Login')} 
+                        variant="secondary" 
+                        className="w-full !px-4 !py-2.5 text-sm font-medium"
+                    >
+                        Login
+                    </Button>
+                )}
+            </div>
+        </>
     );
 
     return (
         <header className="fixed top-0 left-0 w-full z-50 p-1.5 sm:p-2 md:p-4">
-            <nav className={`w-full max-w-7xl mx-auto flex items-center justify-between p-1.5 sm:p-2 md:p-3 bg-zinc-900 border border-white/10 transition-all duration-500 ease-in-out ${isScrolled ? 'rounded-[12px] sm:rounded-[20px] md:rounded-[30px] shadow-2xl shadow-black/60' : 'rounded-md sm:rounded-lg md:rounded-xl'}`}>
+            <nav className={`w-full max-w-7xl mx-auto flex items-center justify-between p-1.5 sm:p-2 md:p-3 transition-all duration-500 ease-in-out ${
+                isMobileMenuOpen 
+                    ? 'bg-zinc-800/98 border-accent-gold/50 border-2 shadow-2xl shadow-accent-gold/30 rounded-[12px] sm:rounded-[20px] md:rounded-[30px]' 
+                    : `bg-zinc-900 border border-white/10 ${isScrolled ? 'rounded-[12px] sm:rounded-[20px] md:rounded-[30px] shadow-2xl shadow-black/60' : 'rounded-md sm:rounded-lg md:rounded-xl'}`
+            }`}>
                 <CompanyLogo onClick={() => handleLinkClick('Home')} />
 
                 <div className="hidden lg:flex items-center space-x-2">
@@ -225,14 +324,31 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
                 </div>
                 
                 <div className="lg:hidden">
-                    <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white p-1.5 sm:p-2 mr-0.5 sm:mr-1 focus:outline-none focus:ring-2 focus:ring-accent-gold rounded-md">
-                         <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}></path></svg>
+                    <button 
+                        ref={mobileMenuButtonRef}
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+                        className={`p-1.5 sm:p-2 mr-0.5 sm:mr-1 focus:outline-none focus:ring-2 focus:ring-accent-gold focus:ring-offset-2 focus:ring-offset-zinc-800 rounded-md transition-all duration-200 ${
+                            isMobileMenuOpen 
+                                ? 'text-accent-gold bg-accent-gold/20 border-2 border-accent-gold/50 shadow-lg shadow-accent-gold/20' 
+                                : 'text-white hover:text-accent-gold hover:bg-zinc-800/50 border border-transparent'
+                        }`}
+                        aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                        aria-expanded={isMobileMenuOpen}
+                    >
+                         <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}></path></svg>
                     </button>
                 </div>
             </nav>
 
-            <div className={`lg:hidden absolute top-[calc(100%+0.25rem)] sm:top-[calc(100%+0.5rem)] left-0 w-full px-2 sm:px-4 transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'}`}>
-                 <div className="p-2.5 sm:p-3 md:p-4 bg-zinc-900/95 backdrop-blur-xl border border-zinc-700 rounded-lg sm:rounded-xl md:rounded-2xl shadow-2xl shadow-black/30 max-h-[calc(100vh-100px)] sm:max-h-[calc(100vh-120px)] overflow-y-auto">
+            <div 
+                ref={mobileMenuRef}
+                className={`lg:hidden absolute top-[calc(100%+0.25rem)] sm:top-[calc(100%+0.5rem)] left-0 w-full px-2 sm:px-4 transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4 pointer-events-none'}`}
+            >
+                 <div className={`p-2.5 sm:p-3 md:p-4 backdrop-blur-xl border-2 rounded-lg sm:rounded-xl md:rounded-2xl shadow-2xl max-h-[calc(100vh-100px)] sm:max-h-[calc(100vh-120px)] overflow-y-auto transition-all duration-300 ${
+                     isMobileMenuOpen 
+                         ? 'bg-zinc-900/98 border-accent-gold/50 shadow-accent-gold/30' 
+                         : 'bg-zinc-900/95 border-zinc-700 shadow-black/30'
+                 }`}>
                     <MobileNavLinks />
                  </div>
             </div>

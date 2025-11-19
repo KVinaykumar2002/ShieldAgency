@@ -5,33 +5,108 @@ const GalleryCarousel: React.FC = () => {
     const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
+    const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+    const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const imageRefs = useRef<Map<string, HTMLImageElement>>(new Map());
+    const preloadingRef = useRef<Set<string>>(new Set());
+    const loadedImagesRef = useRef<Set<string>>(new Set());
+    const imageErrorsRef = useRef<Set<string>>(new Set());
+
+    // Sync refs with state
+    useEffect(() => {
+        loadedImagesRef.current = loadedImages;
+    }, [loadedImages]);
+
+    useEffect(() => {
+        imageErrorsRef.current = imageErrors;
+    }, [imageErrors]);
+
+    // Preload images
+    const preloadImage = useCallback((url: string) => {
+        // Check if already loaded, errored, or currently preloading
+        if (loadedImagesRef.current.has(url) || imageErrorsRef.current.has(url) || preloadingRef.current.has(url)) {
+            return;
+        }
+        
+        preloadingRef.current.add(url);
+        
+        const img = new Image();
+        img.onload = () => {
+            setLoadedImages(prev => {
+                const newSet = new Set(prev);
+                newSet.add(url);
+                loadedImagesRef.current = newSet;
+                return newSet;
+            });
+            preloadingRef.current.delete(url);
+        };
+        img.onerror = () => {
+            setImageErrors(prev => {
+                const newSet = new Set(prev);
+                newSet.add(url);
+                imageErrorsRef.current = newSet;
+                return newSet;
+            });
+            preloadingRef.current.delete(url);
+        };
+        img.src = url;
+    }, []);
 
     useEffect(() => {
         const fetchGallery = async () => {
             try {
                 const response = await galleryAPI.getAll();
-                setGalleryItems(response.data || []);
+                const items = response.data || [];
+                setGalleryItems(items);
+                
+                // Preload first 5 images immediately (more aggressive preloading)
+                if (items.length > 0) {
+                    items.slice(0, Math.min(5, items.length)).forEach(item => {
+                        preloadImage(item.imageUrl);
+                    });
+                }
             } catch (error) {
                 console.error('Failed to load gallery images:', error);
             }
         };
         fetchGallery();
-    }, []);
+    }, [preloadImage]);
 
     const nextSlide = useCallback(() => {
         if (galleryItems.length === 0) return;
-        setCurrentIndex((prev) => (prev + 1) % galleryItems.length);
-    }, [galleryItems.length]);
+        setCurrentIndex((prev) => {
+            const next = (prev + 1) % galleryItems.length;
+            // Preload next and previous images
+            const nextIndex = (next + 1) % galleryItems.length;
+            const prevIndex = (next - 1 + galleryItems.length) % galleryItems.length;
+            if (galleryItems[nextIndex]) preloadImage(galleryItems[nextIndex].imageUrl);
+            if (galleryItems[prevIndex]) preloadImage(galleryItems[prevIndex].imageUrl);
+            return next;
+        });
+    }, [galleryItems, preloadImage]);
 
-    const prevSlide = () => {
+    const prevSlide = useCallback(() => {
         if (galleryItems.length === 0) return;
-        setCurrentIndex((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
-    };
+        setCurrentIndex((prev) => {
+            const next = (prev - 1 + galleryItems.length) % galleryItems.length;
+            // Preload next and previous images
+            const nextIndex = (next + 1) % galleryItems.length;
+            const prevIndex = (next - 1 + galleryItems.length) % galleryItems.length;
+            if (galleryItems[nextIndex]) preloadImage(galleryItems[nextIndex].imageUrl);
+            if (galleryItems[prevIndex]) preloadImage(galleryItems[prevIndex].imageUrl);
+            return next;
+        });
+    }, [galleryItems, preloadImage]);
     
-    const goToSlide = (index: number) => {
+    const goToSlide = useCallback((index: number) => {
         setCurrentIndex(index);
-    };
+        // Preload adjacent images
+        const nextIndex = (index + 1) % galleryItems.length;
+        const prevIndex = (index - 1 + galleryItems.length) % galleryItems.length;
+        if (galleryItems[nextIndex]) preloadImage(galleryItems[nextIndex].imageUrl);
+        if (galleryItems[prevIndex]) preloadImage(galleryItems[prevIndex].imageUrl);
+    }, [galleryItems, preloadImage]);
 
     useEffect(() => {
         if (timeoutRef.current) {
@@ -49,6 +124,24 @@ const GalleryCarousel: React.FC = () => {
         };
     }, [currentIndex, isHovered, nextSlide, galleryItems.length]);
 
+    // Preload images when currentIndex changes
+    useEffect(() => {
+        if (galleryItems.length === 0) return;
+        
+        // Preload current, next, and previous images
+        const indicesToPreload = [
+            currentIndex,
+            (currentIndex + 1) % galleryItems.length,
+            (currentIndex - 1 + galleryItems.length) % galleryItems.length,
+        ];
+        
+        indicesToPreload.forEach(index => {
+            if (galleryItems[index]) {
+                preloadImage(galleryItems[index].imageUrl);
+            }
+        });
+    }, [currentIndex, galleryItems, preloadImage]);
+
     const kenburnsClasses = ['animate-kenburns-top-left', 'animate-kenburns-bottom-right'];
 
     return (
@@ -58,24 +151,87 @@ const GalleryCarousel: React.FC = () => {
             onMouseLeave={() => setIsHovered(false)}
         >
             {/* Gallery Images */}
-            {galleryItems.length > 0 && galleryItems.map((item, index) => (
-                <div 
-                    key={item._id} 
-                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out flex items-center justify-center bg-black/20 ${
-                        currentIndex === index ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                    }`}
-                >
-                    <img 
-                        src={item.imageUrl} 
-                        alt={item.title || 'Gallery Image'} 
-                        loading={index === 0 || index === currentIndex ? "eager" : "lazy"}
-                        className={`max-w-full max-h-full w-auto h-auto object-contain ${
-                            currentIndex === index ? kenburnsClasses[index % kenburnsClasses.length] : ''
+            {galleryItems.length > 0 && galleryItems.map((item, index) => {
+                const isActive = currentIndex === index;
+                const isLoaded = loadedImages.has(item.imageUrl);
+                const hasError = imageErrors.has(item.imageUrl);
+                const shouldLoad = isActive || index === 0 || index === (currentIndex + 1) % galleryItems.length || index === (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+                
+                return (
+                    <div 
+                        key={item._id} 
+                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out flex items-center justify-center bg-black/20 ${
+                            isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'
                         }`}
-                        key={currentIndex}
-                    />
-                </div>
-            ))}
+                    >
+                        {/* Loading placeholder */}
+                        {!isLoaded && !hasError && isActive && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-gold"></div>
+                            </div>
+                        )}
+                        
+                        {/* Error placeholder */}
+                        {hasError && isActive && (
+                            <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                                <div className="text-center">
+                                    <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p className="text-sm">Failed to load image</p>
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* Actual image */}
+                        {(shouldLoad || isLoaded) && !hasError && (
+                            <img 
+                                ref={(el) => {
+                                    if (el) imageRefs.current.set(item.imageUrl, el);
+                                }}
+                                src={item.imageUrl} 
+                                alt={item.title || 'Gallery Image'} 
+                                loading={index === 0 || isActive ? "eager" : "lazy"}
+                                decoding="async"
+                                fetchPriority={isActive ? "high" : "low"}
+                                className={`max-w-full max-h-full w-auto h-auto object-contain transition-opacity duration-500 ${
+                                    isLoaded ? 'opacity-100' : 'opacity-0'
+                                } ${
+                                    isActive ? kenburnsClasses[index % kenburnsClasses.length] : ''
+                                }`}
+                                onLoad={(e) => {
+                                    const img = e.currentTarget;
+                                    setLoadedImages(prev => {
+                                        const newSet = new Set(prev);
+                                        newSet.add(item.imageUrl);
+                                        loadedImagesRef.current = newSet;
+                                        
+                                        // Prefetch next image if not on data saver mode
+                                        if ('connection' in navigator && (navigator as any).connection?.saveData === false) {
+                                            const nextIndex = (currentIndex + 1) % galleryItems.length;
+                                            if (galleryItems[nextIndex] && !newSet.has(galleryItems[nextIndex].imageUrl)) {
+                                                const link = document.createElement('link');
+                                                link.rel = 'prefetch';
+                                                link.href = galleryItems[nextIndex].imageUrl;
+                                                document.head.appendChild(link);
+                                            }
+                                        }
+                                        
+                                        return newSet;
+                                    });
+                                    img.style.opacity = '1';
+                                }}
+                                onError={() => {
+                                    setImageErrors(prev => new Set(prev).add(item.imageUrl));
+                                }}
+                                style={{
+                                    willChange: isActive ? 'transform, opacity' : 'opacity',
+                                }}
+                            />
+                        )}
+                    </div>
+                );
+            })}
 
             {/* Navigation Arrows */}
             {galleryItems.length > 1 && (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Page } from './types';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -15,15 +15,20 @@ import LoginPage from './components/pages/LoginPage';
 import SignUpPage from './components/pages/SignUpPage';
 import WhatsAppButton from './components/WhatsAppButton';
 import MailButton from './components/MailButton';
+import WelcomePopupForm from './components/WelcomePopupForm';
 import { authAPI, roleStorage } from './utils/api';
 
 const App: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<Page>('Home');
     const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
+    const [highlightedServiceId, setHighlightedServiceId] = useState<string | null>(null);
     const [isFading, setIsFading] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
     const [forceAdminLogin, setForceAdminLogin] = useState(false);
+    const [showWelcomePopup, setShowWelcomePopup] = useState(false);
+    const highlightTimeoutRef = useRef<number | null>(null);
+    const scrollCheckIntervalRef = useRef<number | null>(null);
 
     // Check authentication on mount
     useEffect(() => {
@@ -49,6 +54,36 @@ const App: React.FC = () => {
         };
         checkAuth();
     }, []);
+
+    // Show welcome popup on Home page for non-logged-in users
+    useEffect(() => {
+        // Wait for auth check to complete
+        if (isCheckingAuth) return;
+        
+        // Only show on Home page
+        if (currentPage !== 'Home') {
+            setShowWelcomePopup(false);
+            return;
+        }
+        
+        // Only show popup if user is NOT logged in
+        if (isAuthenticated) {
+            console.log('ℹ️ User is logged in, skipping popup');
+            setShowWelcomePopup(false);
+            return;
+        }
+        
+        console.log('🔍 Popup check:', { currentPage, isCheckingAuth, isAuthenticated });
+        
+        // Show popup for non-logged-in users (show every time they visit Home page)
+        // Small delay to ensure page is loaded
+        const timer = setTimeout(() => {
+            console.log('🎉 Showing welcome popup form for non-logged-in user');
+            setShowWelcomePopup(true);
+        }, 2000); // 2 second delay for better UX
+        
+        return () => clearTimeout(timer);
+    }, [currentPage, isCheckingAuth, isAuthenticated]);
 
     const handleLoginSuccess = () => {
         // Check role and redirect accordingly
@@ -96,6 +131,10 @@ const App: React.FC = () => {
         // If on the same page, but clicking a different sub-item, just update state to trigger scroll
         if (page === currentPage && subPageId && subPageId !== activeSubPage) {
             setActiveSubPage(subPageId);
+            // Set highlighted service if it's a service page
+            if (page === 'Services' && subPageId) {
+                setHighlightedServiceId(subPageId);
+            }
             return;
         }
 
@@ -103,6 +142,12 @@ const App: React.FC = () => {
         setTimeout(() => {
             setCurrentPage(page);
             setActiveSubPage(subPageId || null);
+            // Set highlighted service if navigating to a service
+            if (page === 'Services' && subPageId) {
+                setHighlightedServiceId(subPageId);
+            } else {
+                setHighlightedServiceId(null);
+            }
             setIsFading(false);
         }, 300);
     };
@@ -121,10 +166,36 @@ const App: React.FC = () => {
         if (isFading) return;
 
         // If there's a sub-page ID, scroll to it.
-        if (activeSubPage) {
+        if (activeSubPage && currentPage === 'Services') {
+            // Function to attempt scrolling with retries
+            const scrollToElement = (retries = 15, delay = 100) => {
+                const element = document.getElementById(activeSubPage);
+                if (element) {
+                    // Element found, scroll to it immediately
+                    requestAnimationFrame(() => {
+                        const header = document.querySelector('header > nav');
+                        const headerHeight = header ? header.getBoundingClientRect().height : 100;
+                        const y = element.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    });
+                } else if (retries > 0) {
+                    // Element not found yet, retry after delay
+                    setTimeout(() => scrollToElement(retries - 1, delay), delay);
+                } else {
+                    // Fallback: scroll to top if element not found after retries
+                    console.warn(`Element with id "${activeSubPage}" not found after retries`);
+                    window.scrollTo(0, 0);
+                }
+            };
+
+            // Try immediately first using requestAnimationFrame for better timing
+            requestAnimationFrame(() => {
+                scrollToElement();
+            });
+        } else if (activeSubPage) {
+            // For other pages with sub-pages, use the original logic
             const element = document.getElementById(activeSubPage);
             if (element) {
-                // setTimeout ensures element is painted after state updates.
                 setTimeout(() => {
                     const header = document.querySelector('header > nav');
                     const headerHeight = header ? header.getBoundingClientRect().height : 100;
@@ -132,7 +203,6 @@ const App: React.FC = () => {
                     window.scrollTo({ top: y, behavior: 'smooth' });
                 }, 50);
             } else {
-                // Fallback to top if element not found
                 window.scrollTo(0, 0);
             }
         } else {
@@ -141,6 +211,93 @@ const App: React.FC = () => {
         }
     }, [currentPage, activeSubPage, isFading]);
 
+    // Effect to manage highlight timer (5 seconds)
+    useEffect(() => {
+        if (highlightedServiceId && currentPage === 'Services') {
+            // Clear any existing timeout
+            if (highlightTimeoutRef.current) {
+                clearTimeout(highlightTimeoutRef.current);
+            }
+
+            // Set timeout to clear highlight after 5 seconds
+            highlightTimeoutRef.current = window.setTimeout(() => {
+                setHighlightedServiceId(null);
+            }, 5000);
+
+            return () => {
+                if (highlightTimeoutRef.current) {
+                    clearTimeout(highlightTimeoutRef.current);
+                }
+            };
+        }
+    }, [highlightedServiceId, currentPage]);
+
+    // Effect to detect scroll and clear highlight if user scrolls away
+    useEffect(() => {
+        if (!highlightedServiceId || currentPage !== 'Services') {
+            if (scrollCheckIntervalRef.current) {
+                clearInterval(scrollCheckIntervalRef.current);
+                scrollCheckIntervalRef.current = null;
+            }
+            return;
+        }
+
+        let lastScrollY = window.scrollY;
+        let scrollTimeout: number | null = null;
+
+        const checkScroll = () => {
+            const element = document.getElementById(highlightedServiceId);
+            if (!element) return;
+
+            const rect = element.getBoundingClientRect();
+            const header = document.querySelector('header > nav');
+            const headerHeight = header ? header.getBoundingClientRect().height : 100;
+            const elementTop = rect.top + window.scrollY;
+            const viewportTop = window.scrollY;
+            const viewportBottom = viewportTop + window.innerHeight;
+            const elementBottom = elementTop + rect.height;
+
+            // Check if element is significantly out of viewport (more than 200px)
+            const isOutOfView = elementBottom < viewportTop - 200 || elementTop > viewportBottom + 200;
+
+            // Also check if user scrolled significantly
+            const scrollDelta = Math.abs(window.scrollY - lastScrollY);
+            if (scrollDelta > 50) {
+                lastScrollY = window.scrollY;
+            }
+
+            // Clear highlight if element is out of view and user has scrolled
+            if (isOutOfView && scrollDelta > 50) {
+                if (scrollTimeout) {
+                    clearTimeout(scrollTimeout);
+                }
+                scrollTimeout = window.setTimeout(() => {
+                    setHighlightedServiceId(null);
+                }, 300); // Small delay to avoid flickering
+            }
+        };
+
+        // Check scroll position periodically
+        scrollCheckIntervalRef.current = window.setInterval(checkScroll, 100);
+
+        // Also listen to scroll events for immediate response
+        const handleScroll = () => {
+            checkScroll();
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+            if (scrollCheckIntervalRef.current) {
+                clearInterval(scrollCheckIntervalRef.current);
+            }
+            if (scrollTimeout) {
+                clearTimeout(scrollTimeout);
+            }
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [highlightedServiceId, currentPage]);
+
     const renderPublicPage = () => {
         switch (currentPage) {
             case 'Home':
@@ -148,7 +305,7 @@ const App: React.FC = () => {
             case 'About':
                 return <AboutPage subPageId={activeSubPage || 'journey'} />;
             case 'Services':
-                return <ServicesPage />;
+                return <ServicesPage activeServiceId={activeSubPage} highlightedServiceId={highlightedServiceId} />;
             case 'Training':
                 return <TrainingPage setPage={handlePageChange} />;
             case 'Gallery':
@@ -220,6 +377,13 @@ const App: React.FC = () => {
                     <WhatsAppButton />
                     <MailButton />
                 </div>
+                {/* Welcome Popup Form */}
+                {showWelcomePopup && (
+                    <WelcomePopupForm onClose={() => {
+                        console.log('🔒 Closing popup from App.tsx');
+                        setShowWelcomePopup(false);
+                    }} />
+                )}
             </div>
         </div>
     );

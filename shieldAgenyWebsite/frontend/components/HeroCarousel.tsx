@@ -11,19 +11,75 @@ interface HeroCarouselProps {
 const HeroCarousel: React.FC<HeroCarouselProps> = ({ setPage }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
+    const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+    const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const preloadingRef = useRef<Set<string>>(new Set());
 
-    const nextSlide = useCallback(() => {
-        setCurrentIndex((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
+    // Preload hero images
+    useEffect(() => {
+        const preloadImage = (url: string) => {
+            if (preloadingRef.current.has(url)) return;
+            preloadingRef.current.add(url);
+            
+            const img = new Image();
+            img.onload = () => {
+                setLoadedImages(prev => new Set(prev).add(url));
+                preloadingRef.current.delete(url);
+            };
+            img.onerror = () => {
+                setImageErrors(prev => new Set(prev).add(url));
+                preloadingRef.current.delete(url);
+            };
+            img.src = url;
+        };
+
+        // Preload all hero images immediately (they're above the fold)
+        CAROUSEL_SLIDES.forEach(slide => {
+            preloadImage(slide.image);
+        });
     }, []);
 
-    const prevSlide = () => {
-        setCurrentIndex((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length);
-    };
+    const nextSlide = useCallback(() => {
+        setCurrentIndex((prev) => {
+            const next = (prev + 1) % CAROUSEL_SLIDES.length;
+            // Preload next image
+            const nextNext = (next + 1) % CAROUSEL_SLIDES.length;
+            if (CAROUSEL_SLIDES[nextNext]) {
+                const img = new Image();
+                img.src = CAROUSEL_SLIDES[nextNext].image;
+            }
+            return next;
+        });
+    }, []);
+
+    const prevSlide = useCallback(() => {
+        setCurrentIndex((prev) => {
+            const next = (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length;
+            // Preload previous image
+            const prevPrev = (next - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length;
+            if (CAROUSEL_SLIDES[prevPrev]) {
+                const img = new Image();
+                img.src = CAROUSEL_SLIDES[prevPrev].image;
+            }
+            return next;
+        });
+    }, []);
     
-    const goToSlide = (index: number) => {
+    const goToSlide = useCallback((index: number) => {
         setCurrentIndex(index);
-    };
+        // Preload adjacent images
+        const next = (index + 1) % CAROUSEL_SLIDES.length;
+        const prev = (index - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length;
+        if (CAROUSEL_SLIDES[next]) {
+            const img = new Image();
+            img.src = CAROUSEL_SLIDES[next].image;
+        }
+        if (CAROUSEL_SLIDES[prev]) {
+            const img = new Image();
+            img.src = CAROUSEL_SLIDES[prev].image;
+        }
+    }, []);
 
     useEffect(() => {
         if (timeoutRef.current) {
@@ -50,21 +106,71 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ setPage }) => {
             onMouseLeave={() => setIsHovered(false)}
         >
             {/* Slides */}
-            {CAROUSEL_SLIDES.map((slide, index) => (
-                <div 
-                    key={index} 
-                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${currentIndex === index ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-                >
-                    <img 
-                        src={slide.image} 
-                        alt="Security Agency Professionals" 
-                        loading="lazy"
-                        className={`w-full h-full object-cover ${currentIndex === index ? kenburnsClasses[index % kenburnsClasses.length] : ''}`}
-                        key={currentIndex} // Force re-render to restart animation
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary-black/80 via-black/60 to-transparent"></div>
-                </div>
-            ))}
+            {CAROUSEL_SLIDES.map((slide, index) => {
+                const isActive = currentIndex === index;
+                const isLoaded = loadedImages.has(slide.image);
+                const hasError = imageErrors.has(slide.image);
+                
+                return (
+                    <div 
+                        key={index} 
+                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                    >
+                        {/* Loading placeholder */}
+                        {!isLoaded && !hasError && isActive && (
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary-black to-black flex items-center justify-center">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-gold"></div>
+                            </div>
+                        )}
+                        
+                        {/* Error placeholder */}
+                        {hasError && isActive && (
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary-black to-black flex items-center justify-center text-gray-400">
+                                <div className="text-center">
+                                    <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p className="text-sm">Failed to load image</p>
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* Actual image */}
+                        <img 
+                            src={slide.image} 
+                            alt="Security Agency Professionals" 
+                            loading={index === 0 ? "eager" : "lazy"}
+                            fetchPriority={index === 0 ? "high" : index === 1 ? "high" : "auto"}
+                            decoding="async"
+                            className={`w-full h-full object-cover transition-opacity duration-500 ${
+                                isLoaded ? 'opacity-100' : 'opacity-0'
+                            } ${isActive ? kenburnsClasses[index % kenburnsClasses.length] : ''}`}
+                            onLoad={(e) => {
+                                const img = e.currentTarget;
+                                setLoadedImages(prev => new Set(prev).add(slide.image));
+                                img.style.opacity = '1';
+                                // Prefetch next image
+                                if (index < CAROUSEL_SLIDES.length - 1) {
+                                    const nextSlide = CAROUSEL_SLIDES[index + 1];
+                                    if (nextSlide && !loadedImages.has(nextSlide.image)) {
+                                        const link = document.createElement('link');
+                                        link.rel = 'prefetch';
+                                        link.href = nextSlide.image;
+                                        document.head.appendChild(link);
+                                    }
+                                }
+                            }}
+                            onError={() => {
+                                setImageErrors(prev => new Set(prev).add(slide.image));
+                            }}
+                            style={{
+                                willChange: isActive ? 'transform, opacity' : 'opacity',
+                            }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-primary-black/80 via-black/60 to-transparent"></div>
+                    </div>
+                );
+            })}
 
             {/* Content Overlay */}
             <div className="relative z-20 h-full flex items-center justify-center text-white px-4 sm:px-6 md:px-8 lg:px-12 py-16 sm:py-20 md:py-0">

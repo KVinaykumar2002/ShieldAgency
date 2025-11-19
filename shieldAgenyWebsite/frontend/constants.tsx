@@ -88,6 +88,8 @@ export const FileCheckIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="m9 15 2 2 4-4"></path></svg>
 );
 export const MailIcon = (props: React.SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>;
+export const PhoneIcon = (props: React.SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>;
+export const MapPinIcon = (props: React.SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>;
 export const SettingsIcon = (props: React.SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2.12l-.15.1a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l-.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1 0-2.12l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
 export const MenuIcon = (props: React.SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>;
 export const LogOutIcon = (props: React.SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>;
@@ -109,20 +111,20 @@ export const NAV_LINKS: NavItem[] = [
     page: 'Services',
     subItems: [
       { label: 'Security Services', page: 'Services', subPageId: 'security-services', isCategory: true },
-      { label: 'Personal Security', page: 'Services', subPageId: 'security-services' },
-      { label: 'Residential Security', page: 'Services', subPageId: 'security-services' },
-      { label: 'Commercial Security', page: 'Services', subPageId: 'security-services' },
-      { label: 'Industrial Security', page: 'Services', subPageId: 'security-services' },
-      { label: 'Hospital Security', page: 'Services', subPageId: 'security-services' },
-      { label: 'Warehouse Security', page: 'Services', subPageId: 'security-services' },
-      { label: 'Event Management Security', page: 'Services', subPageId: 'security-services' },
-      { label: 'Parking Security', page: 'Services', subPageId: 'security-services' },
-      { label: 'Bouncer Services', page: 'Services', subPageId: 'security-services' },
+      { label: 'Personal Security', page: 'Services', subPageId: 'personal-security' },
+      { label: 'Residential Security', page: 'Services', subPageId: 'residential-security' },
+      { label: 'Commercial Security', page: 'Services', subPageId: 'commercial-security' },
+      { label: 'Industrial Security', page: 'Services', subPageId: 'industrial-security' },
+      { label: 'Hospital Security', page: 'Services', subPageId: 'hospital-security' },
+      { label: 'Warehouse Security', page: 'Services', subPageId: 'warehouse-security' },
+      { label: 'Event Management Security', page: 'Services', subPageId: 'event-management-security' },
+      { label: 'Parking Security', page: 'Services', subPageId: 'parking-security' },
+      { label: 'Bouncer Services', page: 'Services', subPageId: 'bouncer-services' },
       { label: 'Housekeeping Services', page: 'Services', subPageId: 'housekeeping-services', isCategory: true },
-      { label: 'One-time Cleaning', page: 'Services', subPageId: 'housekeeping-services' },
-      { label: 'Manual Cleaning', page: 'Services', subPageId: 'housekeeping-services' },
-      { label: 'Mechanized Cleaning', page: 'Services', subPageId: 'housekeeping-services' },
-      { label: 'Deep Cleaning', page: 'Services', subPageId: 'housekeeping-services' },
+      { label: 'One-time Cleaning', page: 'Services', subPageId: 'one-time-cleaning' },
+      { label: 'Manual Cleaning', page: 'Services', subPageId: 'manual-cleaning' },
+      { label: 'Mechanized Cleaning', page: 'Services', subPageId: 'mechanized-cleaning' },
+      { label: 'Deep Cleaning', page: 'Services', subPageId: 'deep-cleaning' },
     ],
   },
   { label: 'Training', page: 'Training' },
@@ -303,46 +305,55 @@ export const JOB_OPENINGS: JobOpening[] = [
 // New Detailed Services Data
 export const SECURITY_SERVICES = [
     {
+        id: 'personal-security',
         icon: UserCheckIcon,
         title: 'Personal Security',
         description: 'Discreet and professional close protection for individuals, executives, and high-profile persons.'
     },
     {
+        id: 'residential-security',
         icon: HomeIcon,
         title: 'Residential Security',
         description: 'Comprehensive security solutions to protect your home and family, ensuring peace of mind.'
     },
     {
+        id: 'commercial-security',
         icon: BuildingIcon,
         title: 'Commercial Security',
         description: 'Tailored security for offices, retail spaces, and corporate campuses to protect assets and personnel.'
     },
     {
+        id: 'industrial-security',
         icon: FactoryIcon,
         title: 'Industrial Security',
         description: 'Specialized security for manufacturing plants and industrial sites to prevent theft and ensure operational safety.'
     },
     {
+        id: 'hospital-security',
         icon: HeartPulseIcon,
         title: 'Hospital Security',
         description: 'Sensitive security services to maintain a safe and secure environment for patients, staff, and visitors.'
     },
     {
+        id: 'warehouse-security',
         icon: WarehouseIcon,
         title: 'Warehouse Security',
         description: 'Robust security measures to protect inventory and logistics operations from internal and external threats.'
     },
     {
+        id: 'event-management-security',
         icon: UsersIcon,
         title: 'Event Management Security',
         description: 'Expert crowd control and security management for events of all sizes, from corporate functions to public gatherings.'
     },
     {
+        id: 'parking-security',
         icon: CarIcon,
         title: 'Parking Security',
         description: 'Patrols and surveillance to ensure the safety of vehicles and patrons in parking structures and lots.'
     },
     {
+        id: 'bouncer-services',
         icon: ShieldCheckIcon,
         title: 'Bouncer Services',
         description: 'Professional, trained bouncers to maintain order and safety at venues like nightclubs, bars, and private parties.'
@@ -351,21 +362,25 @@ export const SECURITY_SERVICES = [
 
 export const HOUSEKEEPING_SERVICES = [
     {
+        id: 'one-time-cleaning',
         icon: SparklesIcon,
         title: 'One-time Cleaning',
         description: 'A thorough, single-session cleaning service perfect for special occasions or moving in/out.'
     },
     {
+        id: 'manual-cleaning',
         icon: HandIcon,
         title: 'Manual Cleaning',
         description: 'Detailed and meticulous cleaning by our trained staff for areas requiring a personal touch.'
     },
     {
+        id: 'mechanized-cleaning',
         icon: CleaningMachineIcon,
         title: 'Mechanized Cleaning',
         description: 'Efficient and deep cleaning for large areas using modern, high-performance cleaning equipment.'
     },
     {
+        id: 'deep-cleaning',
         icon: SprayCanIcon,
         title: 'Deep Cleaning',
         description: 'An intensive, top-to-bottom cleaning service that targets deep-seated grime and sanitizes your space.'

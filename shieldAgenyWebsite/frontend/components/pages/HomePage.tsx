@@ -47,9 +47,16 @@ const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
             setReviewsLoading(true);
             try {
                 const response = await googleReviewsAPI.getPublic();
-                setGoogleReviews(response.data || []);
-            } catch (err) {
-                console.error('Failed to load google reviews', err);
+                if (response && response.data) {
+                    setGoogleReviews(response.data);
+                    console.log('✅ Google reviews loaded:', response.data.length);
+                } else {
+                    console.warn('⚠️ No reviews data in response');
+                    setGoogleReviews([]);
+                }
+            } catch (err: any) {
+                console.error('❌ Failed to load google reviews:', err);
+                setGoogleReviews([]);
             } finally {
                 setReviewsLoading(false);
             }

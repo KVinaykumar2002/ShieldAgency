@@ -1,6 +1,19 @@
 import type { GoogleReview as GoogleReviewType } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://shieldagency.onrender.com/api/';
+// Auto-detect API URL: use localhost if running locally and VITE_API_URL is not set
+const getApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // If running on localhost, use local backend
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:5001/api/';
+  }
+  // Otherwise use production
+  return 'https://shieldagency.onrender.com/api/';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 // User role storage
 export const roleStorage = {
@@ -26,9 +39,15 @@ async function apiRequest<T>(
   };
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    // Normalize URL - remove leading slash from endpoint and ensure API_BASE_URL ends with /
+    const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL : `${API_BASE_URL}/`;
+    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+    const url = `${baseUrl}${normalizedEndpoint}`;
+    
+    const response = await fetch(url, {
       ...options,
       headers,
+      credentials: 'include', // Include credentials (cookies) in the request
     });
 
     let data;
@@ -41,6 +60,15 @@ async function apiRequest<T>(
     }
 
     if (!response.ok) {
+      // Handle 404 Not Found
+      if (response.status === 404) {
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const isProductionUrl = API_BASE_URL.includes('shieldagency.onrender.com');
+        if (isLocalhost && isProductionUrl) {
+          throw new Error(`API endpoint not found. You're running locally but connecting to production. Set VITE_API_URL=http://localhost:5001/api/ in your .env file.`);
+        }
+        throw new Error(`API endpoint not found: ${normalizedEndpoint}. Please check if the server is running and the route is configured correctly.`);
+      }
       // Handle 403 Forbidden (admin access required)
       if (response.status === 403) {
         roleStorage.removeRole();

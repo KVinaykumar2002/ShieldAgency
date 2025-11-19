@@ -39,46 +39,55 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeSection, setActiveSec
     return (
         <>
             <div 
-                className={`fixed inset-y-0 left-0 z-50 w-64 bg-black/30 backdrop-blur-xl border-r border-white/10 flex flex-col transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
+                className={`fixed inset-y-0 left-0 z-50 w-64 bg-black/30 backdrop-blur-xl border-r border-white/10 flex flex-col transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 overflow-y-auto`}
             >
                 <CompanyLogo onClick={() => setPage('Home')} />
                 
-                <nav className="flex-1 px-4 py-4 space-y-2">
+                <nav className="flex-1 px-3 sm:px-4 py-4 space-y-1.5 sm:space-y-2 overflow-y-auto">
                     {ADMIN_SIDEBAR_LINKS.map(({ label, icon: Icon }) => (
                         <button
                             key={label}
                             onClick={() => handleNavigation(label)}
-                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 group ${
+                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 group touch-manipulation ${
                                 activeSection === label 
                                 ? 'bg-accent-gold text-primary-black shadow-lg shadow-accent-gold/20' 
-                                : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                                : 'text-gray-300 hover:bg-white/10 hover:text-white active:bg-white/20'
                             }`}
                         >
-                            <Icon className={`w-5 h-5 mr-3 transition-colors ${activeSection === label ? 'text-primary-black' : 'text-gray-400 group-hover:text-accent-gold'}`} />
-                            <span>{label}</span>
+                            <Icon className={`w-5 h-5 mr-3 flex-shrink-0 transition-colors ${activeSection === label ? 'text-primary-black' : 'text-gray-400 group-hover:text-accent-gold'}`} />
+                            <span className="truncate">{label}</span>
                         </button>
                     ))}
                 </nav>
 
-                <div className="px-4 py-4 border-t border-white/10 space-y-2">
+                <div className="px-3 sm:px-4 py-4 border-t border-white/10 space-y-1.5 sm:space-y-2 flex-shrink-0">
                      <button
                         onClick={() => handleNavigation('Settings')}
-                        className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 group ${
+                        className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 group touch-manipulation ${
                             activeSection === 'Settings' 
                             ? 'bg-accent-gold text-primary-black shadow-lg shadow-accent-gold/20' 
-                            : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                            : 'text-gray-300 hover:bg-white/10 hover:text-white active:bg-white/20'
                         }`}
                     >
-                        <SettingsIcon className={`w-5 h-5 mr-3 transition-colors ${activeSection === 'Settings' ? 'text-primary-black' : 'text-gray-400 group-hover:text-accent-gold'}`} />
-                        <span>Settings</span>
+                        <SettingsIcon className={`w-5 h-5 mr-3 flex-shrink-0 transition-colors ${activeSection === 'Settings' ? 'text-primary-black' : 'text-gray-400 group-hover:text-accent-gold'}`} />
+                        <span className="truncate">Settings</span>
                     </button>
-                    <button onClick={onLogout} className="w-full flex items-center px-3 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white rounded-lg group">
-                        <LogOutIcon className="w-5 h-5 mr-3 text-gray-400 group-hover:text-accent-gold" />
-                        <span>Logout</span>
+                    <button 
+                        onClick={onLogout} 
+                        className="w-full flex items-center px-3 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white rounded-lg group touch-manipulation active:bg-white/20"
+                    >
+                        <LogOutIcon className="w-5 h-5 mr-3 flex-shrink-0 text-gray-400 group-hover:text-accent-gold" />
+                        <span className="truncate">Logout</span>
                     </button>
                 </div>
             </div>
-            {isOpen && <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsOpen(false)}></div>}
+            {isOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm" 
+                    onClick={() => setIsOpen(false)}
+                    aria-label="Close sidebar"
+                ></div>
+            )}
         </>
     );
 };

@@ -35,6 +35,13 @@ const JobApplications: React.FC = () => {
 
     useEffect(() => {
         loadApplications();
+        
+        // Auto-refresh every 3 minutes
+        const refreshInterval = setInterval(() => {
+            loadApplications();
+        }, 3 * 60 * 1000);
+
+        return () => clearInterval(refreshInterval);
     }, []);
 
     const openStatusModal = (app: Application) => {
@@ -134,15 +141,23 @@ const JobApplications: React.FC = () => {
 
     return (
         <AnimatedSection>
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Job Applications</h1>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3">
+                <h1 className="text-2xl sm:text-3xl font-bold">Job Applications</h1>
             </div>
-            <div className="bg-glass-bg backdrop-blur-xl border border-white/10 rounded-lg p-6 space-y-6">
+            <div className="bg-glass-bg backdrop-blur-xl border border-white/10 rounded-lg p-4 sm:p-6 space-y-4 sm:space-y-6">
                 <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <p className="text-gray-300">View and manage all job applications submitted via the careers page.</p>
-                        {error && <p className="text-sm text-red-400 mt-2">{error}</p>}
-                        {success && <p className="text-sm text-emerald-400 mt-2">{success}</p>}
+                    <div className="flex-1">
+                        <p className="text-sm sm:text-base text-gray-300">View and manage all job applications submitted via the careers page.</p>
+                        {error && (
+                            <div className="mt-2 p-2.5 sm:p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                                <p className="text-xs sm:text-sm text-red-400">{error}</p>
+                            </div>
+                        )}
+                        {success && (
+                            <div className="mt-2 p-2.5 sm:p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                                <p className="text-xs sm:text-sm text-emerald-400">{success}</p>
+                            </div>
+                        )}
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3">
                         <div className="flex items-center bg-white/5 border border-white/10 rounded-lg px-3 py-2 w-full sm:w-64">
@@ -184,19 +199,24 @@ const JobApplications: React.FC = () => {
 
                 <section className="border border-white/10 rounded-xl overflow-hidden">
                     {loading ? (
-                        <p className="p-6 text-gray-300">Loading applications...</p>
+                        <div className="p-6 sm:p-8 text-center">
+                            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent-gold mb-4"></div>
+                            <p className="text-gray-300">Loading applications...</p>
+                        </div>
                     ) : filteredApplications.length === 0 ? (
-                        <p className="p-6 text-gray-300 text-center">No applications found.</p>
+                        <div className="p-6 sm:p-8 text-center">
+                            <p className="text-gray-300">No applications found.</p>
+                        </div>
                     ) : (
                         <ul className="divide-y divide-white/10">
                             {filteredApplications.map((app) => (
-                                <li key={app._id} className="p-6 hover:bg-white/5 transition-colors">
+                                <li key={app._id} className="p-4 sm:p-6 hover:bg-white/5 transition-colors">
                                     <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                                        <div className="space-y-2 flex-1">
-                                            <div className="flex items-center gap-3 flex-wrap">
-                                                <h2 className="text-xl font-semibold text-white">{app.name}</h2>
-                                                <span className="text-sm text-gray-400">{app.email}</span>
-                                                <span className="text-sm text-gray-400">{app.phone}</span>
+                                        <div className="space-y-2 flex-1 min-w-0">
+                                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 flex-wrap">
+                                                <h2 className="text-lg sm:text-xl font-semibold text-white truncate">{app.name}</h2>
+                                                <span className="text-xs sm:text-sm text-gray-400 truncate">{app.email}</span>
+                                                <span className="text-xs sm:text-sm text-gray-400">{app.phone}</span>
                                             </div>
                                             {app.jobTitle && (
                                                 <div className="flex items-center gap-2">
@@ -233,12 +253,12 @@ const JobApplications: React.FC = () => {
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="flex md:flex-col gap-2">
+                                        <div className="flex sm:flex-row md:flex-col gap-2 flex-shrink-0">
                                             <Button
                                                 variant="primary"
                                                 type="button"
                                                 onClick={() => openStatusModal(app)}
-                                                className="!px-4 !py-2 text-sm"
+                                                className="!px-3 sm:!px-4 !py-2 text-xs sm:text-sm w-full sm:w-auto"
                                             >
                                                 Manage Status
                                             </Button>
@@ -249,11 +269,11 @@ const JobApplications: React.FC = () => {
                                                     const mailto = `mailto:${app.email}?subject=Re: Your Job Application at Shield Agency`;
                                                     window.location.href = mailto;
                                                 }}
-                                                className="!px-4 !py-2 text-sm"
+                                                className="!px-3 sm:!px-4 !py-2 text-xs sm:text-sm w-full sm:w-auto"
                                             >
                                                 Contact
                                             </Button>
-                                            <Button variant="danger" type="button" onClick={() => handleDelete(app._id)} className="!px-4 !py-2 text-sm">
+                                            <Button variant="danger" type="button" onClick={() => handleDelete(app._id)} className="!px-3 sm:!px-4 !py-2 text-xs sm:text-sm w-full sm:w-auto">
                                                 Delete
                                             </Button>
                                         </div>
@@ -268,16 +288,17 @@ const JobApplications: React.FC = () => {
             <Modal
                 isOpen={isStatusModalOpen}
                 onClose={closeStatusModal}
-                title={`Manage Application - ${selectedApplication?.name}`}
+                title={`Manage Application - ${selectedApplication?.name || ''}`}
+                size="md"
             >
-                <form onSubmit={handleStatusUpdate} className="space-y-4">
+                <form onSubmit={handleStatusUpdate} className="space-y-3 sm:space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">Status</label>
                         <select
                             value={statusForm.status}
                             onChange={(e) => setStatusForm(prev => ({ ...prev, status: e.target.value as Application['status'] }))}
                             required
-                            className="w-full p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue"
+                            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
                         >
                             {statusOptions.map((status) => (
                                 <option key={status} value={status}>{status}</option>
@@ -285,21 +306,25 @@ const JobApplications: React.FC = () => {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Notes</label>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">Notes</label>
                         <textarea
                             value={statusForm.notes}
                             onChange={(e) => setStatusForm(prev => ({ ...prev, notes: e.target.value }))}
                             rows={4}
                             placeholder="Add notes about this application..."
-                            className="w-full p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue"
+                            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
                         />
                     </div>
-                    {modalError && <p className="text-red-400 text-sm">{modalError}</p>}
-                    <div className="flex justify-end pt-4 space-x-3">
-                        <Button variant="secondary" type="button" onClick={closeStatusModal}>
+                    {modalError && (
+                        <div className="p-2.5 sm:p-3 bg-red-500/10 border border-red-500/30 rounded-md">
+                            <p className="text-red-400 text-xs sm:text-sm">{modalError}</p>
+                        </div>
+                    )}
+                    <div className="flex flex-col-reverse sm:flex-row justify-end pt-3 sm:pt-4 gap-2 sm:gap-3">
+                        <Button variant="secondary" type="button" onClick={closeStatusModal} className="w-full sm:w-auto">
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={submitting}>
+                        <Button type="submit" disabled={submitting} className="w-full sm:w-auto">
                             {submitting ? 'Updating...' : 'Update Status'}
                         </Button>
                     </div>

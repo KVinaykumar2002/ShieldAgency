@@ -21,7 +21,9 @@ const renderStars = (rating: number) => {
 };
 
 const GoogleReviewsSection: React.FC<GoogleReviewsSectionProps> = ({ reviews }) => {
-    if (!reviews.length) return null;
+    if (!reviews || !reviews.length) {
+        return null;
+    }
 
     return (
         <section className="py-12 sm:py-16 md:py-20">

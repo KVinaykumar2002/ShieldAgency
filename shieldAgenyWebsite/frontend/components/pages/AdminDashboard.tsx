@@ -77,13 +77,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ setPage, onLogout }) =>
                 setPage={setPage}
                 onLogout={onLogout}
             />
-            <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-64' : 'ml-0'}`}>
+            <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out w-full ${isSidebarOpen ? 'lg:ml-64' : 'ml-0'}`}>
                 <AdminHeader 
                     toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
                     isSidebarOpen={isSidebarOpen} 
                     onLogout={onLogout}
                 />
-                <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+                <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8 overflow-y-auto w-full">
                     {renderSection()}
                 </main>
             </div>
