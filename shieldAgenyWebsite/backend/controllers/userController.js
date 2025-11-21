@@ -62,11 +62,26 @@ exports.login = async (req, res, next) => {
 // @route   GET /api/users/me
 // @access  Private
 exports.getMe = async (req, res, next) => {
+  // Check if req.user exists (since middleware doesn't set it, we need to handle this)
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({ success: false, message: 'User authentication required' });
+  }
+
   const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(404).json({ success: false, message: 'User not found' });
+  }
 
   res.status(200).json({
     success: true,
-    data: user
+    data: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role || 'user',
+      avatar: user.avatar || null
+    }
   });
 };
 
@@ -82,7 +97,8 @@ const sendTokenResponse = (user, statusCode, res) => {
       id: user._id,
       name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role,
+      avatar: user.avatar || null
     }
   });
 };

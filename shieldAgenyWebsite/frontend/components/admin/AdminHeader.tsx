@@ -8,9 +8,10 @@ interface AdminHeaderProps {
     toggleSidebar: () => void;
     isSidebarOpen: boolean;
     onLogout: () => void;
+    avatar?: string | null;
 }
 
-const AdminHeader: React.FC<AdminHeaderProps> = ({ toggleSidebar, isSidebarOpen, onLogout }) => {
+const AdminHeader: React.FC<AdminHeaderProps> = ({ toggleSidebar, isSidebarOpen, onLogout, avatar }) => {
     return (
         <header className="sticky top-0 z-40">
              <div className="px-2 sm:px-4 lg:px-6 xl:px-8 mt-2 sm:mt-4">
@@ -37,8 +38,12 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ toggleSidebar, isSidebarOpen,
                         <div className="relative group">
                              <img
                                 className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 border-accent-gold object-cover cursor-pointer hover:border-accent-gold/80 transition-colors"
-                                src="https://picsum.photos/seed/admin/100/100"
+                                src={avatar || `https://ui-avatars.com/api/?name=Admin&background=FFD700&color=000&size=128`}
                                 alt="Admin Profile"
+                                onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = `https://ui-avatars.com/api/?name=Admin&background=FFD700&color=000&size=128`;
+                                }}
                             />
                             <div className="absolute top-full right-0 mt-2 w-48 bg-zinc-800/95 backdrop-blur-lg border border-zinc-700 rounded-xl shadow-2xl p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto z-50">
                                 <button 

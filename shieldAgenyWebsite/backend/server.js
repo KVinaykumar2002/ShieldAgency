@@ -3,6 +3,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
+const mongoose = require('mongoose');
 const fileUpload = require('express-fileupload'); // for handling large file uploads
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
@@ -10,14 +11,17 @@ const errorHandler = require('./middleware/errorHandler');
 // Load environment variables
 dotenv.config();
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB (non-blocking - server will start even if DB connection fails)
+connectDB().catch(err => {
+  console.error('Database connection failed, but server will continue:', err.message);
+});
 
 // Import route files
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const publicRoutes = require('./routes/publicRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const googleReviewRoutes = require('./routes/googleReviewRoutes');
 
 // Initialize Express app
 const app = express();
@@ -52,10 +56,29 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 /* -------------------- 🚏 API Routes -------------------- */
 
+// Health check route
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    success: true, 
+    message: 'Server is running',
+    timestamp: new Date().toISOString(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
+});
+
 app.use('/api/auth', authRoutes); // Admin auth routes
 app.use('/api/users', userRoutes); // User-related routes
 app.use('/api', publicRoutes); // Public routes
 app.use('/api/admin', adminRoutes); // Admin panel routes
+app.use('/api/google-reviews', googleReviewRoutes); // Google Reviews routes (public GET, admin POST/PUT/DELETE)
+
+// 404 handler for unmatched routes
+app.use((req, res, next) => {
+  res.status(404).json({
+    success: false,
+    error: `Route ${req.method} ${req.originalUrl} not found`
+  });
+});
 
 /* -------------------- ⚙️ Error Handling -------------------- */
 

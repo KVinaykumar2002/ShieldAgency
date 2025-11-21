@@ -132,7 +132,7 @@ export const authAPI = {
   register: async (name: string, email: string, password: string) => {
     const response = await apiRequest<{
       success: boolean;
-      data: { id: string; name: string; email: string; role: string };
+      data: { id: string; name: string; email: string; role: string; avatar: string | null };
     }>('users/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password }),
@@ -146,7 +146,7 @@ export const authAPI = {
   userLogin: async (email: string, password: string) => {
     const response = await apiRequest<{
       success: boolean;
-      data: { id: string; name: string; email: string; role: string };
+      data: { id: string; name: string; email: string; role: string; avatar: string | null };
     }>('users/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -160,7 +160,7 @@ export const authAPI = {
   userGetMe: async () => {
     const response = await apiRequest<{
       success: boolean;
-      data: { id: string; name: string; email: string; role: string };
+      data: { id: string; name: string; email: string; role: string; avatar: string | null };
     }>('/users/me', {
       method: 'GET',
     });
@@ -171,7 +171,7 @@ export const authAPI = {
   adminLogin: async (email: string, password: string) => {
     const response = await apiRequest<{
       success: boolean;
-      data: { id: string; name: string; email: string; role: string };
+      data: { id: string; name: string; email: string; role: string; avatar: string | null };
     }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -185,7 +185,7 @@ export const authAPI = {
   adminGetMe: async () => {
     const response = await apiRequest<{
       success: boolean;
-      data: { id: string; name: string; email: string; role: string };
+      data: { id: string; name: string; email: string; role: string; avatar: string | null };
     }>('auth/me', {
       method: 'GET',
     });
@@ -357,6 +357,21 @@ export const adminAPI = {
     }),
   getDashboardStats: async () =>
     apiRequest<ApiResponse<DashboardStats>>('admin/dashboard/stats', {
+      method: 'GET',
+    }),
+};
+
+export type JobOpening = {
+  _id: string;
+  title: string;
+  location: string;
+  type: string;
+  description: string[];
+};
+
+export const jobAPI = {
+  getAll: async () =>
+    apiRequest<ApiResponse<JobOpening[]>>('jobs', {
       method: 'GET',
     }),
 };
