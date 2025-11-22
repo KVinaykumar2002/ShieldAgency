@@ -265,8 +265,42 @@ export const TESTIMONIALS: Testimonial[] = [
     },
 ];
 
-// Job Openings Data - Now fetched from API
-// Static data removed - jobs are fetched dynamically from /api/jobs
+// Job Openings Data
+export const JOB_OPENINGS: JobOpening[] = [
+    {
+        title: 'Unarmed Security Officer',
+        location: 'New York, NY',
+        type: 'Full-time',
+        description: [
+            'Monitor and patrol premises to prevent and detect signs of intrusion.',
+            'Control access points and authorize entrance and departure of employees and visitors.',
+            'Write detailed reports on daily activities and irregularities.',
+            'Possess a valid state security license and excellent communication skills.'
+        ]
+    },
+    {
+        title: 'Armed Security Guard',
+        location: 'Los Angeles, CA',
+        type: 'Full-time',
+        description: [
+            'Provide armed security for high-value assets and facilities.',
+            'Respond to alarms and emergency situations with professionalism.',
+            'Maintain a high level of proficiency with firearms and security equipment.',
+            'Requires valid armed guard license, clean background check, and 3+ years experience.'
+        ]
+    },
+    {
+        title: 'Event Bouncer / Crowd Control',
+        location: 'Miami, FL',
+        type: 'Part-time / Contract',
+        description: [
+            'Ensure the safety and security of guests at events, nightclubs, and concerts.',
+            'Manage crowd flow, check IDs, and de-escalate potential conflicts.',
+            'Excellent interpersonal skills and a calm demeanor under pressure are essential.',
+            'Previous experience in event security or crowd management preferred.'
+        ]
+    },
+];
 
 // New Detailed Services Data
 export const SECURITY_SERVICES = [

@@ -38,11 +38,6 @@ exports.updatePassword = async (req, res, next) => {
     return res.status(400).json({ success: false, message: 'Current and new password are required' });
   }
 
-  // Check if req.admin exists (since middleware doesn't set it, we need to handle this)
-  if (!req.admin || !req.admin.id) {
-    return res.status(401).json({ success: false, message: 'Admin authentication required' });
-  }
-
   const admin = await Admin.findById(req.admin.id).select('+password');
 
   if (!admin) {
@@ -65,26 +60,11 @@ exports.updatePassword = async (req, res, next) => {
 // @route   GET /api/auth/me
 // @access  Private
 exports.getMe = async (req, res, next) => {
-  // Check if req.admin exists (since middleware doesn't set it, we need to handle this)
-  if (!req.admin || !req.admin.id) {
-    return res.status(401).json({ success: false, message: 'Admin authentication required' });
-  }
-
   const admin = await Admin.findById(req.admin.id);
-
-  if (!admin) {
-    return res.status(404).json({ success: false, message: 'Admin not found' });
-  }
 
   res.status(200).json({
     success: true,
-    data: {
-      id: admin._id,
-      name: admin.name,
-      email: admin.email,
-      role: admin.role || 'admin',
-      avatar: admin.avatar || null
-    }
+    data: admin
   });
 };
 
@@ -100,8 +80,7 @@ const sendTokenResponse = (admin, statusCode, res) => {
       id: admin._id,
       name: admin.name,
       email: admin.email,
-      role: admin.role,
-      avatar: admin.avatar || null
+      role: admin.role
     }
   });
 };

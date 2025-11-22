@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { Page } from '../../types';
+import { JOB_OPENINGS } from '../../constants';
 import AnimatedSection from '../ui/AnimatedSection';
 import Button from '../ui/Button';
 import RecruitmentProcedure from '../RecruitmentProcedure';
-import { applicationAPI, jobAPI, JobOpening } from '../../utils/api';
+import { applicationAPI } from '../../utils/api';
 
 interface CareersPageProps {
     subPageId: string;
@@ -21,27 +22,6 @@ const CareersPage: React.FC<CareersPageProps> = ({ subPageId, setPage, isAuthent
     const [showAuthPrompt, setShowAuthPrompt] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
-    const [loadingJobs, setLoadingJobs] = useState(true);
-    const [jobsError, setJobsError] = useState<string | null>(null);
-
-    // Fetch job openings from API
-    useEffect(() => {
-        const fetchJobs = async () => {
-            setLoadingJobs(true);
-            setJobsError(null);
-            try {
-                const response = await jobAPI.getAll();
-                setJobOpenings(response.data || []);
-            } catch (err: any) {
-                setJobsError(err.message || 'Failed to load job openings');
-                setJobOpenings([]);
-            } finally {
-                setLoadingJobs(false);
-            }
-        };
-        fetchJobs();
-    }, []);
 
     // Hide auth prompt when user becomes authenticated
     useEffect(() => {
@@ -91,8 +71,8 @@ const CareersPage: React.FC<CareersPageProps> = ({ subPageId, setPage, isAuthent
             formDataToSend.append('resume', resume);
             
             // Add job title if a job is selected
-            if (selectedJobIndex !== null && jobOpenings[selectedJobIndex]) {
-                formDataToSend.append('jobTitle', jobOpenings[selectedJobIndex].title);
+            if (selectedJobIndex !== null && JOB_OPENINGS[selectedJobIndex]) {
+                formDataToSend.append('jobTitle', JOB_OPENINGS[selectedJobIndex].title);
             }
 
             await applicationAPI.create(formDataToSend);
@@ -140,26 +120,8 @@ const CareersPage: React.FC<CareersPageProps> = ({ subPageId, setPage, isAuthent
                 <section id="openings" className="mb-12 sm:mb-16 md:mb-20">
                     <AnimatedSection>
                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12"><span className="text-highlight-blue">Current</span> Openings</h2>
-                        {loadingJobs ? (
-                            <div className="max-w-4xl mx-auto text-center py-12">
-                                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent-gold"></div>
-                                <p className="text-gray-400 mt-4">Loading job openings...</p>
-                            </div>
-                        ) : jobsError ? (
-                            <div className="max-w-4xl mx-auto text-center py-12">
-                                <p className="text-red-400 mb-4">{jobsError}</p>
-                                <Button onClick={() => window.location.reload()} variant="secondary">
-                                    Retry
-                                </Button>
-                            </div>
-                        ) : jobOpenings.length === 0 ? (
-                            <div className="max-w-4xl mx-auto text-center py-12">
-                                <p className="text-gray-400 text-lg">No job openings available at this time.</p>
-                                <p className="text-gray-500 text-sm mt-2">Please check back later for new opportunities.</p>
-                            </div>
-                        ) : (
                         <div className="max-w-4xl mx-auto space-y-4">
-                            {jobOpenings.map((job, index) => (
+                            {JOB_OPENINGS.map((job, index) => (
                                 <div key={index} className="bg-glass-bg border border-white/10 rounded-lg overflow-hidden">
                                     <button onClick={() => {
                                         setExpandedJob(expandedJob === index ? null : index);
@@ -201,7 +163,6 @@ const CareersPage: React.FC<CareersPageProps> = ({ subPageId, setPage, isAuthent
                                 </div>
                             ))}
                         </div>
-                        )}
                     </AnimatedSection>
                 </section>
                 
@@ -240,10 +201,10 @@ const CareersPage: React.FC<CareersPageProps> = ({ subPageId, setPage, isAuthent
                                 </div>
                             ) : (
                             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                                {selectedJobIndex !== null && jobOpenings[selectedJobIndex] && (
+                                {selectedJobIndex !== null && (
                                     <div className="bg-highlight-blue/10 border border-highlight-blue/30 rounded-lg p-3">
                                         <p className="text-sm text-gray-300">
-                                            <span className="font-semibold text-highlight-blue">Applying for:</span> {jobOpenings[selectedJobIndex].title}
+                                            <span className="font-semibold text-highlight-blue">Applying for:</span> {JOB_OPENINGS[selectedJobIndex].title}
                                         </p>
                                     </div>
                                 )}

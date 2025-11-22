@@ -70,10 +70,8 @@ router.route('/customers').get(getCustomers).post(createCustomer);
 router.route('/customers/:id').put(updateCustomer).delete(deleteCustomer);
 
 // Google Reviews Routes
-router.get('/google-reviews', getGoogleReviews);
-router.post('/google-reviews', createGoogleReview);
-router.put('/google-reviews/:id', updateGoogleReview);
-router.delete('/google-reviews/:id', deleteGoogleReview);
+router.route('/google-reviews').get(getGoogleReviews).post(createGoogleReview);
+router.route('/google-reviews/:id').put(updateGoogleReview).delete(deleteGoogleReview);
 
 // Add routes for Testimonials, Jobs, Management etc. here following the same pattern.
 // Example:

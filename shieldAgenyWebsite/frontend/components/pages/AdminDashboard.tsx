@@ -20,10 +20,9 @@ import GoogleReviewsManagement from '../admin/GoogleReviewsManagement';
 interface AdminDashboardProps {
     setPage: (page: Page) => void;
     onLogout: () => void;
-    avatar?: string | null;
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ setPage, onLogout, avatar }) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ setPage, onLogout }) => {
     const [activeSection, setActiveSection] = useState<AdminSection>('Dashboard');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -83,7 +82,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ setPage, onLogout, avat
                     toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
                     isSidebarOpen={isSidebarOpen} 
                     onLogout={onLogout}
-                    avatar={avatar}
                 />
                 <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8 overflow-y-auto w-full">
                     {renderSection()}

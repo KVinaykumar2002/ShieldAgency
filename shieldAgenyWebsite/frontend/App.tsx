@@ -27,7 +27,6 @@ const App: React.FC = () => {
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
     const [forceAdminLogin, setForceAdminLogin] = useState(false);
     const [showWelcomePopup, setShowWelcomePopup] = useState(false);
-    const [userAvatar, setUserAvatar] = useState<string | null>(null);
     const highlightTimeoutRef = useRef<number | null>(null);
     const scrollCheckIntervalRef = useRef<number | null>(null);
 
@@ -43,21 +42,13 @@ const App: React.FC = () => {
                     if (response.data?.role) {
                         roleStorage.setRole(response.data.role);
                     }
-                    // Store avatar if available
-                    if (response.data?.avatar) {
-                        setUserAvatar(response.data.avatar);
-                    } else {
-                        setUserAvatar(null);
-                    }
                 } catch (error) {
                     // Auth check failed, clear role
                     roleStorage.removeRole();
                     setIsAuthenticated(false);
-                    setUserAvatar(null);
                 }
             } else {
                 setIsAuthenticated(false);
-                setUserAvatar(null);
             }
             setIsCheckingAuth(false);
         };
@@ -94,23 +85,10 @@ const App: React.FC = () => {
         return () => clearTimeout(timer);
     }, [currentPage, isCheckingAuth, isAuthenticated]);
 
-    const handleLoginSuccess = async () => {
+    const handleLoginSuccess = () => {
         // Check role and redirect accordingly
         const role = roleStorage.getRole();
         setIsAuthenticated(true);
-        
-        // Fetch user data including avatar
-        try {
-            const response = await authAPI.getMe();
-            if (response.data?.avatar) {
-                setUserAvatar(response.data.avatar);
-            } else {
-                setUserAvatar(null);
-            }
-        } catch (error) {
-            setUserAvatar(null);
-        }
-        
         if (role === 'admin' || forceAdminLogin) {
             setForceAdminLogin(false);
             // Directly set to Admin page after login if admin role
@@ -126,7 +104,6 @@ const App: React.FC = () => {
     const handleLogout = () => {
         authAPI.logout();
         setIsAuthenticated(false);
-        setUserAvatar(null);
         handlePageChange('Home');
     };
 
@@ -365,7 +342,7 @@ const App: React.FC = () => {
             return <LoginPage setPage={handlePageChange} onLoginSuccess={handleLoginSuccess} isAdmin={true} />;
         }
         
-        return <AdminDashboard setPage={handlePageChange} onLogout={handleLogout} avatar={userAvatar} />;
+        return <AdminDashboard setPage={handlePageChange} onLogout={handleLogout} />;
     }
     
     if (currentPage === 'Login') {
@@ -390,7 +367,7 @@ const App: React.FC = () => {
         <div className="bg-primary-black min-h-screen relative">
             <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern opacity-5"></div>
             <div className="relative z-10">
-                <Header activePage={currentPage} setPage={handlePageChange} isAuthenticated={isAuthenticated} onLogout={handleLogout} avatar={userAvatar} />
+                <Header activePage={currentPage} setPage={handlePageChange} isAuthenticated={isAuthenticated} onLogout={handleLogout} />
                 <main className={`transition-opacity duration-300 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
                     {renderPublicPage()}
                 </main>
