@@ -3,7 +3,11 @@ import AnimatedSection from '../ui/AnimatedSection';
 import Button from '../ui/Button';
 import { adminAPI, authAPI, roleStorage } from '../../utils/api';
 
-const Settings: React.FC = () => {
+interface SettingsProps {
+  avatar?: string | null;
+}
+
+const Settings: React.FC<SettingsProps> = ({ avatar: initialAvatar }) => {
   const [darkMode, setDarkMode] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -11,7 +15,7 @@ const Settings: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [avatar, setAvatar] = useState<string | null>(null);
+  const [avatar, setAvatar] = useState<string | null>(initialAvatar || null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -19,22 +23,11 @@ const Settings: React.FC = () => {
   const [avatarError, setAvatarError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const response = await authAPI.getMe();
-        if (response.data?.avatar) {
-          setAvatar(response.data.avatar);
-        }
-        if (response.data?.email) {
-          roleStorage.setEmail(response.data.email);
-        }
-      } catch (err) {
-        console.error('Failed to load user data:', err);
-        // Don't crash if getMe fails - just log the error
-      }
-    };
-    loadUserData();
-  }, []);
+    // Update avatar when prop changes
+    if (initialAvatar !== undefined) {
+      setAvatar(initialAvatar);
+    }
+  }, [initialAvatar]);
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

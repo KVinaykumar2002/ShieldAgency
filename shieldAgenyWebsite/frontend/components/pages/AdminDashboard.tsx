@@ -62,7 +62,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ setPage, onLogout, avat
             case 'Applications': return <JobApplications />;
             case 'Google Reviews': return <GoogleReviewsManagement />;
             case 'Enquiries': return <WebsiteEnquiries />;
-            case 'Settings': return <Settings />;
+            case 'Settings': return <Settings avatar={avatar} />;
             default: return <DashboardOverview />;
         }
     };
