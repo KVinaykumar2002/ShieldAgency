@@ -22,8 +22,8 @@ const Settings: React.FC<SettingsProps> = ({ avatar: initialAvatar }) => {
   const [avatarMessage, setAvatarMessage] = useState<string | null>(null);
   const [avatarError, setAvatarError] = useState<string | null>(null);
 
+  // Update avatar when prop changes
   useEffect(() => {
-    // Update avatar when prop changes
     if (initialAvatar !== undefined) {
       setAvatar(initialAvatar);
     }
