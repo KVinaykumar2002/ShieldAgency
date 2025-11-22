@@ -1,78 +1,99 @@
-// Import dependencies
+// ==================== IMPORTS ====================
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
-const fileUpload = require('express-fileupload'); // for handling large file uploads
+const fileUpload = require('express-fileupload');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 // Load environment variables
 dotenv.config();
 
-// Connect to MongoDB
+// ==================== CONNECT TO MONGODB ====================
 connectDB();
 
-// Import route files
+// ==================== INITIALIZE APP ====================
+const app = express();
+
+// ==================== MIDDLEWARE ====================
+
+// Increase payload size for JSON + Form Data
+app.use(
+  express.json({
+    limit: '100mb'
+  })
+);
+
+app.use(
+  express.urlencoded({
+    limit: '100mb',
+    extended: true,
+    parameterLimit: 100000
+  })
+);
+
+// CORS Configuration — SAFE FOR RENDER + CLOUDFLARE
+app.use(
+  cors({
+    origin: [
+      "https://shieldagency.in",
+      "http://localhost:3001"
+    ],
+    credentials: true,
+    methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
+    allowedHeaders: ["Content-Type", "Authorization"]
+  })
+);
+
+// Pre-Flight Handling
+app.options("*", cors());
+
+// File Upload Configuration
+app.use(
+  fileUpload({
+    limits: { fileSize: 100 * 1024 * 1024 }, // 100MB
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+    abortOnLimit: true
+  })
+);
+
+// Static Uploads Folder
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// ==================== ROUTES ====================
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const publicRoutes = require('./routes/publicRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
-// Initialize Express app
-const app = express();
+// Correct route mounting
+app.use('/api/auth', authRoutes);    // Login/Register
+app.use('/api/users', userRoutes);   // User routes
+app.use('/api', publicRoutes);       // Public API
+app.use('/api/admin', adminRoutes);  // Admin panel
 
-/* -------------------- 🔧 Middleware Configuration -------------------- */
+// ==================== HEALTH CHECK (VERY IMPORTANT ON RENDER) ====================
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Backend is running successfully!"
+  });
+});
 
-// Increase payload size limit for JSON and form data
-app.use(express.json({ limit: '100mb' }));
-app.use(express.urlencoded({ limit: '100mb', extended: true, parameterLimit: 100000 }));
-
-// Enable CORS for all routes - allow all origins
-app.use(cors({
-  origin: true, // Allow all origins
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  maxAge: 86400 // 24 hours
-}));
-
-// Enable file uploads up to 100MB
-app.use(
-  fileUpload({
-    limits: { fileSize: 100 * 1024 * 1024 }, // 100MB
-    useTempFiles: true,
-    tempFileDir: '/tmp/',
-  })
-);
-
-// Serve static files from uploads folder
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-/* -------------------- 🚏 API Routes -------------------- */
-
-app.use('/api/auth', authRoutes); // Admin auth routes
-app.use('/api/users', userRoutes); // User-related routes
-app.use('/api', publicRoutes); // Public routes
-app.use('/api/admin', adminRoutes); // Admin panel routes
-
-/* -------------------- ⚙️ Error Handling -------------------- */
-
-// Custom error handler middleware
+// ==================== ERROR HANDLER ====================
 app.use(errorHandler);
 
-/* -------------------- 🚀 Server Initialization -------------------- */
-
+// ==================== START SERVER ====================
 const PORT = process.env.PORT || 5001;
 
 const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
-/* -------------------- 💥 Unhandled Promise Rejection Handler -------------------- */
-
-process.on('unhandledRejection', (err) => {
-  console.error(`❌ Error: ${err.message}`);
+// ==================== UNHANDLED PROMISE REJECTIONS ====================
+process.on("unhandledRejection", (err) => {
+  console.error("❌ Unhandled Rejection:", err);
   server.close(() => process.exit(1));
 });
