@@ -33,15 +33,10 @@ app.use(
   })
 );
 
-// CORS Configuration — SAFE FOR RENDER + CLOUDFLARE
+// CORS Configuration — Allow all origins
 app.use(
   cors({
-    origin: [
-      "https://shieldagency.in",
-      "https://shieldagency.onrender.com",
-      "http://localhost:3000",
-      "http://localhost:3001"
-    ],
+    origin: true, // Allow all origins
     credentials: true,
     methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
     allowedHeaders: ["Content-Type", "Authorization"]
