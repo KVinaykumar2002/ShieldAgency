@@ -6,7 +6,7 @@ import { authAPI, roleStorage } from '../../utils/api';
 
 interface LoginPageProps {
     setPage: (page: Page) => void;
-    onLoginSuccess: () => void;
+    onLoginSuccess: (avatar?: string | null) => void;
     isAdmin?: boolean;
 }
 
@@ -56,8 +56,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ setPage, onLoginSuccess, isAdmin 
                 roleStorage.setRole(isAdmin ? 'admin' : 'user');
             }
             
-            // Call success callback
-            onLoginSuccess();
+            // Store email if available
+            if (response.data?.email) {
+                roleStorage.setEmail(response.data.email);
+            }
+            
+            // Call success callback with avatar from login response
+            onLoginSuccess(response.data?.avatar || null);
         } catch (err: any) {
             setError(err.message || 'Invalid credentials. Please try again.');
         } finally {

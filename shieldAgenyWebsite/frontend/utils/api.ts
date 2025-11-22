@@ -170,20 +170,6 @@ export const authAPI = {
     return response;
   },
 
-  userGetMe: async () => {
-    const email = roleStorage.getEmail();
-    if (!email) {
-      throw new Error('Email not found. Please login again.');
-    }
-    const response = await apiRequest<{
-      success: boolean;
-      data: { id: string; name: string; email: string; role: string; avatar?: string | null };
-    }>(`/users/me?email=${encodeURIComponent(email)}`, {
-      method: 'GET',
-    });
-    return response;
-  },
-
   // Admin authentication
   adminLogin: async (email: string, password: string) => {
     const response = await apiRequest<{
@@ -200,30 +186,6 @@ export const authAPI = {
       roleStorage.setEmail(response.data.email);
     }
     return response;
-  },
-
-  adminGetMe: async () => {
-    const email = roleStorage.getEmail();
-    if (!email) {
-      throw new Error('Email not found. Please login again.');
-    }
-    const response = await apiRequest<{
-      success: boolean;
-      data: { id: string; name: string; email: string; role: string; avatar?: string | null };
-    }>(`auth/me?email=${encodeURIComponent(email)}`, {
-      method: 'GET',
-    });
-    return response;
-  },
-
-  // Get current user/admin (works for both)
-  getMe: async () => {
-    const role = roleStorage.getRole();
-    if (role === 'admin') {
-      return authAPI.adminGetMe();
-    } else {
-      return authAPI.userGetMe();
-    }
   },
 
   logout: () => {

@@ -7,7 +7,7 @@ import { authAPI, roleStorage } from '../../utils/api';
 
 interface SignUpPageProps {
     setPage: (page: Page) => void;
-    onLoginSuccess?: () => void;
+    onLoginSuccess?: (avatar?: string | null) => void;
 }
 
 const CompanyLogo: React.FC = () => (
@@ -62,12 +62,17 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ setPage, onLoginSuccess }) => {
                 roleStorage.setRole(response.data.role);
             }
             
+            // Store email if available
+            if (response.data?.email) {
+                roleStorage.setEmail(response.data.email);
+            }
+            
             setIsSubmitted(true);
             
             // If login success callback is provided, use it; otherwise redirect to login
             if (onLoginSuccess) {
                 setTimeout(() => {
-                    onLoginSuccess();
+                    onLoginSuccess(response.data?.avatar || null);
                 }, 2000);
             } else {
                 setTimeout(() => {

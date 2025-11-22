@@ -36,30 +36,11 @@ const App: React.FC = () => {
         const checkAuth = async () => {
             const role = roleStorage.getRole();
             if (role) {
-                try {
-                    const response = await authAPI.getMe();
-                    setIsAuthenticated(true);
-                    // Store role if available
-                    if (response.data?.role) {
-                        roleStorage.setRole(response.data.role);
-                    }
-                    // Store email if available
-                    if (response.data?.email) {
-                        roleStorage.setEmail(response.data.email);
-                    }
-                    // Store avatar if available
-                    if (response.data?.avatar) {
-                        setUserAvatar(response.data.avatar);
-                    } else {
-                        setUserAvatar(null);
-                    }
-                } catch (error) {
-                    // Auth check failed - don't crash, just set as not authenticated
-                    console.error('Auth check failed:', error);
-                    roleStorage.removeRole();
-                    setIsAuthenticated(false);
-                    setUserAvatar(null);
-                }
+                // User has a role stored, consider them authenticated
+                // Note: We removed the /me endpoint, so we rely on localStorage only
+                setIsAuthenticated(true);
+                // Avatar would need to be stored separately if needed
+                setUserAvatar(null);
             } else {
                 setIsAuthenticated(false);
                 setUserAvatar(null);
@@ -99,26 +80,13 @@ const App: React.FC = () => {
         return () => clearTimeout(timer);
     }, [currentPage, isCheckingAuth, isAuthenticated]);
 
-    const handleLoginSuccess = async () => {
+    const handleLoginSuccess = (avatar?: string | null) => {
         // Check role and redirect accordingly
         const role = roleStorage.getRole();
         setIsAuthenticated(true);
         
-        // Fetch user data including avatar
-        try {
-            const response = await authAPI.getMe();
-            if (response.data?.avatar) {
-                setUserAvatar(response.data.avatar);
-            } else {
-                setUserAvatar(null);
-            }
-            if (response.data?.email) {
-                roleStorage.setEmail(response.data.email);
-            }
-        } catch (error) {
-            console.error('Failed to fetch user data after login:', error);
-            setUserAvatar(null);
-        }
+        // Set avatar from login response
+        setUserAvatar(avatar || null);
         
         if (role === 'admin' || forceAdminLogin) {
             setForceAdminLogin(false);

@@ -38,6 +38,8 @@ app.use(
   cors({
     origin: [
       "https://shieldagency.in",
+      "https://shieldagency.onrender.com",
+      "http://localhost:3000",
       "http://localhost:3001"
     ],
     credentials: true,

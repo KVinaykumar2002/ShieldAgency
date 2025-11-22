@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { MenuIcon, LogOutIcon, SettingsIcon } from '../../constants';
+import { MenuIcon, LogOutIcon } from '../../constants';
 import companyLogo from '../../src/assets/Logo.png';
 
 interface AdminHeaderProps {
@@ -42,13 +42,6 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ toggleSidebar, isSidebarOpen,
                                 alt="Admin Profile"
                             />
                             <div className="absolute top-full right-0 mt-2 w-48 bg-zinc-800/95 backdrop-blur-lg border border-zinc-700 rounded-xl shadow-2xl p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto z-50">
-                                <button 
-                                    onClick={() => {/* Navigate to settings */}} 
-                                    className="flex items-center w-full text-left px-4 py-2 text-gray-200 rounded-md hover:bg-highlight-blue/50 hover:text-white transition-colors duration-200 text-sm touch-manipulation"
-                                >
-                                    <SettingsIcon className="w-4 h-4 mr-2 flex-shrink-0" />
-                                    Settings
-                                </button>
                                 <button 
                                     onClick={onLogout} 
                                     className="flex items-center w-full text-left px-4 py-2 text-gray-200 rounded-md hover:bg-highlight-blue/50 hover:text-white transition-colors duration-200 text-sm touch-manipulation"
