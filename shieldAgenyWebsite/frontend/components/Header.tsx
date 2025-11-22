@@ -23,9 +23,10 @@ interface HeaderProps {
     setPage: (page: Page, subPageId?: string) => void;
     isAuthenticated: boolean;
     onLogout: () => void;
+    avatar?: string | null;
 }
 
-const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, onLogout, avatar }) => {
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -266,7 +267,11 @@ const Header: React.FC<HeaderProps> = ({ activePage, setPage, isAuthenticated, o
                                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                                 className="focus:outline-none focus:ring-2 focus:ring-accent-gold focus:ring-offset-2 focus:ring-offset-transparent rounded-full"
                             >
-                                <img src="https://picsum.photos/seed/admin/100/100" alt="User" className="w-10 h-10 rounded-full border-2 border-accent-gold cursor-pointer"/>
+                                <img 
+                                    src={avatar ? (avatar.startsWith('http') ? avatar : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://shieldagency.onrender.com'}${avatar}`) : 'https://ui-avatars.com/api/?name=User&background=random&color=fff&size=100'} 
+                                    alt="User" 
+                                    className="w-10 h-10 rounded-full border-2 border-accent-gold cursor-pointer object-cover"
+                                />
                             </button>
                             {isUserMenuOpen && (
                                 <div className="absolute top-full right-0 mt-2 w-48 bg-zinc-800/95 backdrop-blur-lg border border-zinc-700 rounded-xl shadow-2xl p-2 z-[100]">

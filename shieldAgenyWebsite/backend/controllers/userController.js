@@ -59,30 +59,90 @@ exports.login = async (req, res, next) => {
 };
 
 // @desc    Get current logged in user
-// @route   GET /api/users/me
-// @access  Private
+// @route   GET /api/users/me?email=user@example.com
+// @access  Public (JWT removed, email required as query param)
 exports.getMe = async (req, res, next) => {
-  const user = await User.findById(req.user.id);
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ success: false, message: 'Email is required' });
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ success: false, message: 'User not found' });
+  }
 
   res.status(200).json({
     success: true,
-    data: user
-  });
-};
-
-// Get token from model and send response
-const sendTokenResponse = (user, statusCode, res) => {
-  // Create token
-  const token = user.getSignedJwtToken();
-
-  res.status(statusCode).json({
-    success: true,
-    token,
     data: {
       id: user._id,
       name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role || 'user',
+      avatar: user.avatar || null
+    }
+  });
+};
+
+// @desc    Upload user avatar
+// @route   POST /api/users/avatar
+// @access  Private
+exports.uploadAvatar = async (req, res, next) => {
+  try {
+    const { email } = req.query;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email is required' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'Avatar file is required' });
+    }
+
+    // Delete old avatar if exists
+    if (user.avatar) {
+      const fs = require('fs');
+      const path = require('path');
+      const oldAvatarPath = path.join(__dirname, '..', user.avatar);
+      if (fs.existsSync(oldAvatarPath)) {
+        fs.unlinkSync(oldAvatarPath);
+      }
+    }
+
+    user.avatar = `/uploads/avatars/${req.file.filename}`;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Send user response
+const sendTokenResponse = (user, statusCode, res) => {
+  res.status(statusCode).json({
+    success: true,
+    data: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role || 'user',
+      avatar: user.avatar || null
     }
   });
 };

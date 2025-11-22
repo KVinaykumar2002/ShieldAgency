@@ -7,6 +7,26 @@ import { applicationAPI, Application } from '../../utils/api';
 
 const statusOptions: Application['status'][] = ['Pending', 'Reviewed', 'Interviewed', 'Selected', 'Rejected'];
 
+type ApplicationFormState = {
+    name: string;
+    email: string;
+    phone: string;
+    message: string;
+    jobTitle: string;
+    status: Application['status'];
+    notes: string;
+};
+
+const INITIAL_FORM: ApplicationFormState = {
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+    jobTitle: '',
+    status: 'Pending',
+    notes: '',
+};
+
 const JobApplications: React.FC = () => {
     const [applications, setApplications] = useState<Application[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -15,8 +35,10 @@ const JobApplications: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
     const [statusForm, setStatusForm] = useState({ status: 'Pending' as Application['status'], notes: '' });
+    const [createForm, setCreateForm] = useState<ApplicationFormState>(INITIAL_FORM);
     const [submitting, setSubmitting] = useState(false);
     const [modalError, setModalError] = useState<string | null>(null);
 
@@ -59,6 +81,51 @@ const JobApplications: React.FC = () => {
         setSelectedApplication(null);
         setStatusForm({ status: 'Pending', notes: '' });
         setModalError(null);
+    };
+
+    const openCreateModal = () => {
+        setCreateForm(INITIAL_FORM);
+        setSuccess(null);
+        setError(null);
+        setModalError(null);
+        setIsCreateModalOpen(true);
+    };
+
+    const closeCreateModal = () => {
+        setIsCreateModalOpen(false);
+        setCreateForm(INITIAL_FORM);
+        setModalError(null);
+    };
+
+    const handleCreateApplication = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (!createForm.name || !createForm.email || !createForm.phone) {
+            setModalError('Name, email, and phone are required fields.');
+            return;
+        }
+
+        setSubmitting(true);
+        setModalError(null);
+        try {
+            const response = await applicationAPI.createAdmin({
+                name: createForm.name.trim(),
+                email: createForm.email.trim(),
+                phone: createForm.phone.trim(),
+                message: createForm.message.trim() || undefined,
+                jobTitle: createForm.jobTitle.trim() || undefined,
+                status: createForm.status,
+                notes: createForm.notes.trim() || undefined,
+            });
+            setApplications((prev) => [response.data, ...prev]);
+            closeCreateModal();
+            setSuccess('Application created successfully.');
+            setTimeout(() => setSuccess(null), 3000);
+        } catch (err: any) {
+            setModalError(err.message || 'Failed to create application.');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const handleStatusUpdate = async (e: React.FormEvent) => {
@@ -143,6 +210,9 @@ const JobApplications: React.FC = () => {
         <AnimatedSection>
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3">
                 <h1 className="text-2xl sm:text-3xl font-bold">Job Applications</h1>
+                <Button variant="secondary" onClick={openCreateModal} className="w-full sm:w-auto">
+                    Add New Application
+                </Button>
             </div>
             <div className="bg-glass-bg backdrop-blur-xl border border-white/10 rounded-lg p-4 sm:p-6 space-y-4 sm:space-y-6">
                 <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -326,6 +396,118 @@ const JobApplications: React.FC = () => {
                         </Button>
                         <Button type="submit" disabled={submitting} className="w-full sm:w-auto">
                             {submitting ? 'Updating...' : 'Update Status'}
+                        </Button>
+                    </div>
+                </form>
+            </Modal>
+
+            <Modal
+                isOpen={isCreateModalOpen}
+                onClose={closeCreateModal}
+                title="Add New Application"
+                size="md"
+            >
+                <form onSubmit={handleCreateApplication} className="space-y-3 sm:space-y-4">
+                    <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                            Name <span className="text-red-400">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            value={createForm.name}
+                            onChange={(e) => setCreateForm(prev => ({ ...prev, name: e.target.value }))}
+                            required
+                            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
+                            placeholder="Enter applicant name"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                            Email <span className="text-red-400">*</span>
+                        </label>
+                        <input
+                            type="email"
+                            value={createForm.email}
+                            onChange={(e) => setCreateForm(prev => ({ ...prev, email: e.target.value }))}
+                            required
+                            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
+                            placeholder="Enter email address"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                            Phone <span className="text-red-400">*</span>
+                        </label>
+                        <input
+                            type="tel"
+                            value={createForm.phone}
+                            onChange={(e) => setCreateForm(prev => ({ ...prev, phone: e.target.value }))}
+                            required
+                            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
+                            placeholder="Enter phone number"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                            Job Title
+                        </label>
+                        <input
+                            type="text"
+                            value={createForm.jobTitle}
+                            onChange={(e) => setCreateForm(prev => ({ ...prev, jobTitle: e.target.value }))}
+                            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
+                            placeholder="Enter job title (optional)"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                            Status
+                        </label>
+                        <select
+                            value={createForm.status}
+                            onChange={(e) => setCreateForm(prev => ({ ...prev, status: e.target.value as Application['status'] }))}
+                            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
+                        >
+                            {statusOptions.map((status) => (
+                                <option key={status} value={status}>{status}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                            Message
+                        </label>
+                        <textarea
+                            value={createForm.message}
+                            onChange={(e) => setCreateForm(prev => ({ ...prev, message: e.target.value }))}
+                            rows={3}
+                            placeholder="Enter message (optional)"
+                            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                            Notes
+                        </label>
+                        <textarea
+                            value={createForm.notes}
+                            onChange={(e) => setCreateForm(prev => ({ ...prev, notes: e.target.value }))}
+                            rows={3}
+                            placeholder="Add notes (optional)"
+                            className="w-full p-2.5 sm:p-3 bg-white/10 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-highlight-blue text-sm sm:text-base"
+                        />
+                    </div>
+                    {modalError && (
+                        <div className="p-2.5 sm:p-3 bg-red-500/10 border border-red-500/30 rounded-md">
+                            <p className="text-red-400 text-xs sm:text-sm">{modalError}</p>
+                        </div>
+                    )}
+                    <div className="flex flex-col-reverse sm:flex-row justify-end pt-3 sm:pt-4 gap-2 sm:gap-3">
+                        <Button variant="secondary" type="button" onClick={closeCreateModal} className="w-full sm:w-auto">
+                            Cancel
+                        </Button>
+                        <Button type="submit" disabled={submitting} className="w-full sm:w-auto">
+                            {submitting ? 'Creating...' : 'Create Application'}
                         </Button>
                     </div>
                 </form>

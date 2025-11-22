@@ -57,30 +57,90 @@ exports.updatePassword = async (req, res, next) => {
 };
 
 // @desc    Get current logged in admin
-// @route   GET /api/auth/me
-// @access  Private
+// @route   GET /api/auth/me?email=admin@example.com
+// @access  Public (JWT removed, email required as query param)
 exports.getMe = async (req, res, next) => {
-  const admin = await Admin.findById(req.admin.id);
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ success: false, message: 'Email is required' });
+  }
+
+  const admin = await Admin.findOne({ email });
+
+  if (!admin) {
+    return res.status(404).json({ success: false, message: 'Admin not found' });
+  }
 
   res.status(200).json({
     success: true,
-    data: admin
-  });
-};
-
-// Get token from model and send response
-const sendTokenResponse = (admin, statusCode, res) => {
-  // Create token
-  const token = admin.getSignedJwtToken();
-
-  res.status(statusCode).json({
-    success: true,
-    token,
     data: {
       id: admin._id,
       name: admin.name,
       email: admin.email,
-      role: admin.role
+      role: admin.role || 'admin',
+      avatar: admin.avatar || null
+    }
+  });
+};
+
+// @desc    Upload admin avatar
+// @route   POST /api/auth/avatar
+// @access  Private
+exports.uploadAvatar = async (req, res, next) => {
+  try {
+    const { email } = req.query;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email is required' });
+    }
+
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'Admin not found' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'Avatar file is required' });
+    }
+
+    // Delete old avatar if exists
+    if (admin.avatar) {
+      const fs = require('fs');
+      const path = require('path');
+      const oldAvatarPath = path.join(__dirname, '..', admin.avatar);
+      if (fs.existsSync(oldAvatarPath)) {
+        fs.unlinkSync(oldAvatarPath);
+      }
+    }
+
+    admin.avatar = `/uploads/avatars/${req.file.filename}`;
+    await admin.save();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role,
+        avatar: admin.avatar
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Send admin response
+const sendTokenResponse = (admin, statusCode, res) => {
+  res.status(statusCode).json({
+    success: true,
+    data: {
+      id: admin._id,
+      name: admin.name,
+      email: admin.email,
+      role: admin.role || 'admin',
+      avatar: admin.avatar || null
     }
   });
 };

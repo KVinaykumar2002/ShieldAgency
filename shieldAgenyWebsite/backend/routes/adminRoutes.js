@@ -46,7 +46,15 @@ router.route('/services').post(createService); // GET is public
 router.route('/services/:id').put(updateService).delete(deleteService);
 
 // Application Routes
-router.route('/applications').get(getApplications);
+router.route('/applications').get(getApplications).post(async (req, res, next) => {
+    try {
+        const Application = require('../models/applicationModel');
+        const application = await Application.create(req.body);
+        res.status(201).json({ success: true, data: application });
+    } catch (err) {
+        next(err);
+    }
+});
 router.route('/applications/:id').put(updateApplication).delete(deleteApplication);
 
 // Enquiry Routes

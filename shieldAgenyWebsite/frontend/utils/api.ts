@@ -25,6 +25,13 @@ export const roleStorage = {
   },
   removeRole: (): void => {
     localStorage.removeItem('role');
+    localStorage.removeItem('email');
+  },
+  getEmail: (): string | null => {
+    return localStorage.getItem('email');
+  },
+  setEmail: (email: string): void => {
+    localStorage.setItem('email', email);
   }
 };
 
@@ -132,7 +139,7 @@ export const authAPI = {
   register: async (name: string, email: string, password: string) => {
     const response = await apiRequest<{
       success: boolean;
-      data: { id: string; name: string; email: string; role: string };
+      data: { id: string; name: string; email: string; role: string; avatar?: string | null };
     }>('users/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password }),
@@ -140,13 +147,16 @@ export const authAPI = {
     if (response.data.role) {
       roleStorage.setRole(response.data.role);
     }
+    if (response.data.email) {
+      roleStorage.setEmail(response.data.email);
+    }
     return response;
   },
 
   userLogin: async (email: string, password: string) => {
     const response = await apiRequest<{
       success: boolean;
-      data: { id: string; name: string; email: string; role: string };
+      data: { id: string; name: string; email: string; role: string; avatar?: string | null };
     }>('users/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -154,14 +164,21 @@ export const authAPI = {
     if (response.data.role) {
       roleStorage.setRole(response.data.role);
     }
+    if (response.data.email) {
+      roleStorage.setEmail(response.data.email);
+    }
     return response;
   },
 
   userGetMe: async () => {
+    const email = roleStorage.getEmail();
+    if (!email) {
+      throw new Error('Email not found. Please login again.');
+    }
     const response = await apiRequest<{
       success: boolean;
-      data: { id: string; name: string; email: string; role: string };
-    }>('/users/me', {
+      data: { id: string; name: string; email: string; role: string; avatar?: string | null };
+    }>(`/users/me?email=${encodeURIComponent(email)}`, {
       method: 'GET',
     });
     return response;
@@ -171,7 +188,7 @@ export const authAPI = {
   adminLogin: async (email: string, password: string) => {
     const response = await apiRequest<{
       success: boolean;
-      data: { id: string; name: string; email: string; role: string };
+      data: { id: string; name: string; email: string; role: string; avatar?: string | null };
     }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -179,14 +196,21 @@ export const authAPI = {
     if (response.data.role) {
       roleStorage.setRole(response.data.role);
     }
+    if (response.data.email) {
+      roleStorage.setEmail(response.data.email);
+    }
     return response;
   },
 
   adminGetMe: async () => {
+    const email = roleStorage.getEmail();
+    if (!email) {
+      throw new Error('Email not found. Please login again.');
+    }
     const response = await apiRequest<{
       success: boolean;
-      data: { id: string; name: string; email: string; role: string };
-    }>('auth/me', {
+      data: { id: string; name: string; email: string; role: string; avatar?: string | null };
+    }>(`auth/me?email=${encodeURIComponent(email)}`, {
       method: 'GET',
     });
     return response;
@@ -204,6 +228,23 @@ export const authAPI = {
 
   logout: () => {
     roleStorage.removeRole();
+  },
+  uploadAvatar: async (formData: FormData, email: string) => {
+    const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://shieldagency.onrender.com/api/';
+    const role = roleStorage.getRole();
+    const endpoint = role === 'admin' ? 'auth/avatar' : 'users/avatar';
+    const response = await fetch(`${API_BASE_URL}${endpoint}?email=${encodeURIComponent(email)}`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Failed to upload avatar' }));
+      throw new Error(error.error || error.message || 'Failed to upload avatar');
+    }
+
+    return response.json() as Promise<ApiResponse<{ id: string; name: string; email: string; role: string; avatar: string | null }>>;
   }
 };
 
@@ -376,6 +417,19 @@ export const applicationAPI = {
 
     return response.json() as Promise<ApiResponse<Application>>;
   },
+  createAdmin: async (payload: {
+    name: string;
+    email: string;
+    phone: string;
+    message?: string;
+    jobTitle?: string;
+    status?: Application['status'];
+    notes?: string;
+  }) =>
+    apiRequest<ApiResponse<Application>>('admin/applications', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
   getAll: async () =>
     apiRequest<ApiResponse<Application[]>>('admin/applications', {
       method: 'GET',
