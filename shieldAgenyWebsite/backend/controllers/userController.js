@@ -58,34 +58,6 @@ exports.login = async (req, res, next) => {
   return sendTokenResponse(user, 200, res);
 };
 
-// @desc    Get current logged in user
-// @route   GET /api/users/me?email=user@example.com
-// @access  Public (JWT removed, email required as query param)
-exports.getMe = async (req, res, next) => {
-  const { email } = req.query;
-
-  if (!email) {
-    return res.status(400).json({ success: false, message: 'Email is required' });
-  }
-
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    return res.status(404).json({ success: false, message: 'User not found' });
-  }
-
-  res.status(200).json({
-    success: true,
-    data: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role || 'user',
-      avatar: user.avatar || null
-    }
-  });
-};
-
 // @desc    Upload user avatar
 // @route   POST /api/users/avatar
 // @access  Private

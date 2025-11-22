@@ -56,34 +56,6 @@ exports.updatePassword = async (req, res, next) => {
   res.status(200).json({ success: true, message: 'Password updated successfully' });
 };
 
-// @desc    Get current logged in admin
-// @route   GET /api/auth/me?email=admin@example.com
-// @access  Public (JWT removed, email required as query param)
-exports.getMe = async (req, res, next) => {
-  const { email } = req.query;
-
-  if (!email) {
-    return res.status(400).json({ success: false, message: 'Email is required' });
-  }
-
-  const admin = await Admin.findOne({ email });
-
-  if (!admin) {
-    return res.status(404).json({ success: false, message: 'Admin not found' });
-  }
-
-  res.status(200).json({
-    success: true,
-    data: {
-      id: admin._id,
-      name: admin.name,
-      email: admin.email,
-      role: admin.role || 'admin',
-      avatar: admin.avatar || null
-    }
-  });
-};
-
 // @desc    Upload admin avatar
 // @route   POST /api/auth/avatar
 // @access  Private
